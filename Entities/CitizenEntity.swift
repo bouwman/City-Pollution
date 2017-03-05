@@ -34,8 +34,7 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
         let drawPath = DrawPathComponent()
         let input = InputComponent()
         let destination = DestinationComponent(possibleDestinations: possibleDestinations, childNodeName: destinationChildNodeName)
-        let radius = Float(node.frame.width * 1.0) * 0.0
-        let movement = MovementComponent(maxSpeed: 20, maxAcceleration: 20, maxPredictionTime: 1.0, radius: radius, obstacles: obstaclesFor(entities: obstacles), wanderPoint: float2(node.position))
+        let movement = createMovementComponentWith(renderComponent: render)
         let pollution = PollutionComponent(player: player)
         let maxHealth = 100000.0
         let health = HealthComponent(maxHealth: maxHealth, decreaseFactor: healthDecreaseFactor, startHealthPercent: 0.5, increaseFactor: healthIncreaseFactor * (maxHealth / 1000))
@@ -87,11 +86,16 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
             return component
         } else {
             let renderComponent = component(ofType: GKSKNodeComponent.self)!
-            let newComponent = MovementComponent(maxSpeed: 20, maxAcceleration: 20, maxPredictionTime: 1.0, radius: 0, obstacles: obstaclesFor(entities: obstacles), wanderPoint: float2(renderComponent.node.position))
+            let newComponent = createMovementComponentWith(renderComponent: renderComponent)
             addComponent(newComponent)
             newComponent.delegate = renderComponent
             return newComponent
         }
+    }
+    
+    private func createMovementComponentWith(renderComponent: GKSKNodeComponent) -> MovementComponent {
+        let radius = Float(renderComponent.node.frame.width * 1.0) * 0.0
+        return MovementComponent(maxSpeed: 20, maxAcceleration: 20, maxPredictionTime: 1.0, radius: radius, obstacles: obstaclesFor(entities: obstacles), wanderPoint: float2(renderComponent.node.position))
     }
     
     // MARK: - DestinationComponentDelegate

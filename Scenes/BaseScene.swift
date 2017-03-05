@@ -39,10 +39,12 @@ class BaseScene: SKScene {
             
             if let overlay = overlay, let camera = camera {
                 overlay.backgroundNode.removeFromParent()
+                overlay.backgroundNode.alpha = 1.0
+                
                 camera.addChild(overlay.backgroundNode)
                 
                 // Animate the overlay in.
-                overlay.backgroundNode.alpha = 0.0
+                // TODO: Fix fade in
                 overlay.backgroundNode.run(SKAction.fadeIn(withDuration: 0.25))
                 overlay.updateScale()
                 
@@ -135,6 +137,8 @@ extension BaseScene: ButtonNodeResponderType {
         switch button.buttonIdentifier! {
         case .home:
             sceneManager.present(scene: .home)
+        case .retry:
+            sceneManager.present(scene: .currentLevel)
         default:
             fatalError("Unsupported ButtonNode type in Scene.")
         }

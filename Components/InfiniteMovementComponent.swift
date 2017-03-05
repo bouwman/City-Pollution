@@ -39,6 +39,8 @@ class InfiniteMovementComponent: GKAgent2D {
     override func update(deltaTime seconds: TimeInterval) {
         super.update(deltaTime: seconds)
         
+        guard entity != nil else { return }
+        
         let node = renderComponent.node
         
         if node.contains(movePoints.last!) {

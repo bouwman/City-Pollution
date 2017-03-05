@@ -9,6 +9,10 @@
 import SpriteKit
 import GameplayKit
 
+protocol LevelSceneDelegate {
+//    func levelScene(levelScene: LevelScene, did)
+}
+
 class LevelScene: BaseScene {
     var lastUpdateTimeInterval: TimeInterval = 0
     var totalTimeInterval: TimeInterval = 0
@@ -20,6 +24,13 @@ class LevelScene: BaseScene {
     var buildings = [GKEntity]()
     var houses = [HouseEntity]()
     let player = Player(cityPollutionMax: 200)
+    
+    lazy var stateMachine: GKStateMachine = GKStateMachine(states: [
+        LevelSceneActiveState(levelScene: self),
+        LevelScenePauseState(levelScene: self),
+        LevelSceneSuccessState(levelScene: self),
+        LevelSceneFailState(levelScene: self)
+        ])
     
     var pollutionLabel: SKLabelNode {
         let hud = self.childNode(withName: "hud")
@@ -41,23 +52,24 @@ class LevelScene: BaseScene {
         
         entityManager = EntityManager(scene: self)
         
-        for child in children {
-            if let house = child as? HouseNode {
-                let entity = HouseEntity(player: player, node: house, maxCapacity: 5)
-                houses.append(entity)
-                buildings.append(entity)
-                obstacles.append(entity)
-                entityManager.add(entity)
-            } else if let wall = child as? WallNode {
-                let entity = WallEntity(node: wall)
-                obstacles.append(entity)
-            } else if child.name != "park", child.name != "street" {
-                child.physicsBody = SKPhysicsBody(rectangleOf: child.frame.size)
-                child.physicsBody?.categoryBitMask = Const.Physics.Category.houses
-                child.physicsBody?.collisionBitMask = Const.Physics.Collision.all
-                child.physicsBody?.allowsRotation = false
-                child.physicsBody?.pinned = true
+        for layerNode in children {
+            for child in layerNode.children {
+                if let house = child as? HouseNode {
+                    let entity = HouseEntity(player: player, node: house, maxCapacity: 5)
+                    houses.append(entity)
+                    buildings.append(entity)
+                    obstacles.append(entity)
+                    entityManager.add(entity)
+                } else if layerNode.name == "buildings" {
+                    child.physicsBody = SKPhysicsBody(rectangleOf: child.frame.size)
+                    child.physicsBody?.categoryBitMask = Const.Physics.Category.houses
+                    child.physicsBody?.collisionBitMask = Const.Physics.Collision.all
+                    child.physicsBody?.allowsRotation = false
+                    child.physicsBody?.pinned = true
+                }
             }
+            
+
         }
         
         citizenSpawner = HousesManager(houses: houses, spawnInterval: 15)
@@ -65,6 +77,8 @@ class LevelScene: BaseScene {
         citizenSpawner.delegate = self
         
         addCar()
+        
+        stateMachine.enter(LevelSceneActiveState.self)
     }
     
     var firstUpdateTime: TimeInterval = -1
@@ -75,6 +89,12 @@ class LevelScene: BaseScene {
         // Don't perform any updates if the scene isn't in a view.
         guard view != nil else { return }
         
+        // Do not count seconds when was paused
+        if wasPaused {
+            lastUpdateTimeInterval = currentTime
+            wasPaused = false
+        }
+        
         if firstUpdateTime < 0 {
             firstUpdateTime = currentTime
         }
@@ -83,6 +103,8 @@ class LevelScene: BaseScene {
         
         lastUpdateTimeInterval = currentTime
         totalTimeInterval += deltaTime
+        
+        stateMachine.update(deltaTime: deltaTime)
         
         // spawn citizens
         citizenSpawner.update(totalTime: totalTimeInterval)
@@ -101,7 +123,7 @@ class LevelScene: BaseScene {
     }
     
     private func addCar() {
-        let sprite = SKSpriteNode(color: UIColor.black, size: CGSize(width: 40, height: 20))
+        let sprite = SKSpriteNode(color: UIColor.black, size: CGSize(width: 60, height: 30))
         let points = [CGPoint(x: -self.size.width / 2 - sprite.size.width, y: 0), CGPoint(x: 0, y: 0), CGPoint(x: self.size.width / 2 + sprite.size.width, y: 0)]
         let car = CarEntity(node: sprite, movePoints: points)
         
@@ -154,16 +176,25 @@ class LevelScene: BaseScene {
     override func buttonTriggered(button: ButtonNode) {
         switch button.buttonIdentifier! {
         case .pause:
-            pause(!isPaused)
+            stateMachine.enter(LevelScenePauseState.self)
+        case .resume:
+            stateMachine.enter(LevelSceneActiveState.self)
         default:
             super.buttonTriggered(button: button)
         }
     }
     
+    // MARK: Pause
+    
+    private var wasPaused = false
+    
     func pause(_ pause: Bool) {
+        // Do not count seconds when paused
+        wasPaused = !pause
+        
+        entityManager.pause(pause)
         isPaused = pause
         isUserInteractionEnabled = !pause
-        entityManager.pause(pause)
     }
 }
 
@@ -175,7 +206,7 @@ extension LevelScene {
     }
     
     func gameWillPause() {
-        pause(true)
+        stateMachine.enter(LevelScenePauseState.self)
     }
     
     func unregisterForPauseNotifications() {
@@ -191,8 +222,8 @@ extension LevelScene: HousesManagerDataSource {
         let sprite = SKSpriteNode(imageNamed: "citizen")
         sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite.size.height / 2)
         sprite.position = houseSprite.doorPosition
-        sprite.xScale = 0.5
-        sprite.yScale = 0.5
+        sprite.xScale = 0.8
+        sprite.yScale = 0.8
         
         let citizen = CitizenEntity(player: player, healthIncreaseFactor: 0.3, healthDecreaseFactor: 1.0, node: sprite, possibleDestinations: houses, destinationChildNodeName: Const.Nodes.Houses.door, obstacles: obstacles)
         citizen.delegate = entityManager

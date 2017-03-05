@@ -15,6 +15,8 @@ class EntityManager: CitizenEntityDelegate {
     let scene: SKScene
     var toRemove = Set<GKEntity>()
     
+    let playCoinSound = SKAction.playSoundFileNamed("coins.caf", waitForCompletion: false)
+    
     lazy var componentSystems: [GKComponentSystem] = {
         let lights = GKComponentSystem(componentClass: LightComponent.self)
         let contaminators = GKComponentSystem(componentClass: ContaminatorComponent.self)
@@ -63,7 +65,6 @@ class EntityManager: CitizenEntityDelegate {
     func update(_ deltaTime: CFTimeInterval) {
         for componentSystem in componentSystems {
             componentSystem.update(deltaTime: deltaTime)
-            
         }
         
         for curRemove in toRemove {
@@ -89,6 +90,17 @@ class EntityManager: CitizenEntityDelegate {
                     }
                 }
             }
+            if let car = entity as? CarEntity {
+                let moveComponent = car.disableMovementComponent(pause)
+                for componentSystem in componentSystems {
+                    guard componentSystem.componentClass === InfiniteMovementComponent.self else { continue }
+                    if pause {
+                        componentSystem.removeComponent(moveComponent)
+                    } else {
+                        componentSystem.addComponent(moveComponent)
+                    }
+                }
+            }
         }
     }
     
@@ -107,6 +119,7 @@ class EntityManager: CitizenEntityDelegate {
     // MARK: - CitizenEntityDelegate
     
     func citizenEnitityDidArriveAtDestination(citizen: CitizenEntity) {
+        scene.run(playCoinSound)
         remove(citizen)
     }
     

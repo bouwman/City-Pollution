@@ -22,14 +22,14 @@ class SceneManager {
     }
     
     func present(scene identifier: SceneIdentifier) {
-        
         switch identifier {
-        case .level(_):
+        case .level(_), .currentLevel:
             if let scene = SKScene(fileNamed: "LevelScene") as? BaseScene {
                 scene.sceneManager = self
                 scene.scaleMode = .aspectFill
-                                
-                presentingView.presentScene(scene)
+                
+                let transition = SKTransition.fade(withDuration: 1.0)
+                presentingView.presentScene(scene, transition: transition)
             }
         default:
             break

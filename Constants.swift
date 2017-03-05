@@ -6,7 +6,7 @@
 //  Copyright © 2017 Tassilo Bouwman. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 struct Const {
     struct Physics {
@@ -29,4 +29,8 @@ struct Const {
             static let door = "door"
         }
     }
+}
+
+enum WorldLayer: CGFloat {
+    case board = -100, debug = -75, shadows = -50, obstacles = -25, characters = 0, aboveCharacters = 1000, top = 1100
 }
