@@ -17,6 +17,7 @@ class CollisionComponent: GKComponent {
         }
         node.physicsBody?.categoryBitMask = category
         node.physicsBody?.collisionBitMask = collideWith
+        node.physicsBody?.contactTestBitMask = Const.Physics.Collision.all
         node.physicsBody?.allowsRotation = false
         node.physicsBody?.pinned = pinned
     }

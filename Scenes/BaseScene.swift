@@ -134,6 +134,7 @@ extension BaseScene: ButtonNodeResponderType {
     // MARK: ButtonNodeResponderType
     
     func buttonTriggered(button: ButtonNode) {
+        SoundManager.sharedInstance.playSound(.click, inScene: self)
         switch button.buttonIdentifier! {
         case .home:
             sceneManager.present(scene: .home)

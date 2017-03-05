@@ -30,6 +30,8 @@ class SceneManager {
                 
                 let transition = SKTransition.fade(withDuration: 1.0)
                 presentingView.presentScene(scene, transition: transition)
+                
+                SoundManager.sharedInstance.currentScene = scene
             }
         default:
             break

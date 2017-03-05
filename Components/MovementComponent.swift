@@ -30,6 +30,8 @@ class MovementComponent: GKAgent2D {
         self.maxPredictionTime = maxPredictionTime
         self.obstacles = obstacles
         self.wanderPoint = wanderPoint
+        self.topSpeed = maxSpeed
+        self.topAcceleration = maxAcceleration
         
         super.init()
         
@@ -60,8 +62,10 @@ class MovementComponent: GKAgent2D {
                 savedPath = movePath
                 lastPointOld = lastPoint
             }
+            adaptSpeed(isWandering: false)
             self.behavior = PathBehaviour(path: movePath, maxPredictionTime: maxPredictionTime, targetSpeed: maxSpeed, obstacles: obstacles)
         } else {
+            adaptSpeed(isWandering: true)
             self.behavior = WanderBehavior(aroundPoint: wanderPoint, maxPredictionTime: maxPredictionTime, targetSpeed: maxSpeed, obstacles: obstacles)
         }
         
@@ -74,6 +78,19 @@ class MovementComponent: GKAgent2D {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private var topSpeed: Float
+    private var topAcceleration: Float
+    
+    private func adaptSpeed(isWandering: Bool) {
+        if isWandering {
+            self.maxSpeed = topSpeed * 0.5
+            self.maxAcceleration = topAcceleration * 0.5
+        } else {
+            self.maxSpeed = topSpeed
+            self.maxAcceleration = topAcceleration
+        }
     }
 }
 

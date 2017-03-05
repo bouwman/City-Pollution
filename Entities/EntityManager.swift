@@ -14,9 +14,7 @@ class EntityManager: CitizenEntityDelegate {
     var entities = Set<GKEntity>()
     let scene: SKScene
     var toRemove = Set<GKEntity>()
-    
-    let playCoinSound = SKAction.playSoundFileNamed("coins.caf", waitForCompletion: false)
-    
+        
     lazy var componentSystems: [GKComponentSystem] = {
         let lights = GKComponentSystem(componentClass: LightComponent.self)
         let contaminators = GKComponentSystem(componentClass: ContaminatorComponent.self)
@@ -119,7 +117,7 @@ class EntityManager: CitizenEntityDelegate {
     // MARK: - CitizenEntityDelegate
     
     func citizenEnitityDidArriveAtDestination(citizen: CitizenEntity) {
-        scene.run(playCoinSound)
+        SoundManager.sharedInstance.playSound(.coin, inScene: scene)
         remove(citizen)
     }
     

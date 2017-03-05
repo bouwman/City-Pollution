@@ -50,6 +50,8 @@ class LevelScene: BaseScene {
         physicsBody?.categoryBitMask = Const.Physics.Category.bounds
         physicsBody?.collisionBitMask = Const.Physics.Collision.none
         
+        physicsWorld.contactDelegate = self
+        
         entityManager = EntityManager(scene: self)
         
         for layerNode in children {
@@ -177,8 +179,10 @@ class LevelScene: BaseScene {
         switch button.buttonIdentifier! {
         case .pause:
             stateMachine.enter(LevelScenePauseState.self)
+            SoundManager.sharedInstance.playSound(.click, inScene: self)
         case .resume:
             stateMachine.enter(LevelSceneActiveState.self)
+            SoundManager.sharedInstance.playSound(.click, inScene: self)
         default:
             super.buttonTriggered(button: button)
         }
@@ -195,7 +199,7 @@ class LevelScene: BaseScene {
         entityManager.pause(pause)
         isPaused = pause
         isUserInteractionEnabled = !pause
-    }
+    }    
 }
 
 // MARK: - Notifications
@@ -211,6 +215,28 @@ extension LevelScene {
     
     func unregisterForPauseNotifications() {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
+    }
+}
+
+// MARK: - SKPhysicsContactDelegate
+
+extension LevelScene: SKPhysicsContactDelegate {
+    func didBegin(_ contact: SKPhysicsContact) {
+        let firstBody = contact.bodyA
+        let secondBody = contact.bodyB
+        
+        let isFirstCitizen = firstBody.categoryBitMask == Const.Physics.Category.citizens
+        let isSecondCitizen = secondBody.categoryBitMask == Const.Physics.Category.citizens
+        let isFirstCar = firstBody.categoryBitMask == Const.Physics.Category.cars
+        let isSecondCar = secondBody.categoryBitMask == Const.Physics.Category.cars
+        
+        if isFirstCitizen && isSecondCar {
+            entityManager.remove(firstBody.node!.entity!)
+            SoundManager.sharedInstance.playSound(.overrun, inScene: self)
+        } else if isFirstCar && isSecondCitizen {
+            entityManager.remove(secondBody.node!.entity!)
+            SoundManager.sharedInstance.playSound(.overrun, inScene: self)
+        }
     }
 }
 
@@ -249,5 +275,13 @@ extension LevelScene: HousesManagerDelegate {
         }
         
         entityManager.add(citizen)
+    }
+}
+
+class LevelManager {
+    let scene: LevelScene
+    
+    init(scene: LevelScene) {
+        self.scene = scene
     }
 }

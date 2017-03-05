@@ -25,7 +25,10 @@ class InputComponent: GKComponent, InputDelegate {
             destinationComponent.destination = nil
         }
         if let lightComponent = entity?.component(ofType: LightComponent.self) {
-            lightComponent.curLightCount -= 1
+            if lightComponent.curLightCount != 0 {
+                lightComponent.curLightCount -= 1
+                SoundManager.sharedInstance.playSound(.click)
+            }
         }
     }
     

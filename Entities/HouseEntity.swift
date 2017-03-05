@@ -28,7 +28,7 @@ class HouseEntity: GKEntity {
         let pollution = PollutionComponent(player: player)
         let contaminator = ContaminatorComponent(input: 20)
         let houseNode = render.node as! HouseNode
-        let lights = LightComponent(maxLightCount: houseNode.windows.count, turnOnTimeRange: 10...25)
+        let lights = LightComponent(maxLightCount: houseNode.windows.count, turnOnTimeRange: 5...20)
         
         addComponent(render)
         addComponent(collision)
