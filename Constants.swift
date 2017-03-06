@@ -27,6 +27,7 @@ struct Const {
         static let healthBar = "health bar"
         struct Houses {
             static let door = "door"
+            static let capacity = "capacity"
         }
     }
 }

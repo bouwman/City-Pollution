@@ -26,7 +26,7 @@ class SceneManager {
         case .level(_), .currentLevel:
             if let scene = SKScene(fileNamed: "LevelScene") as? BaseScene {
                 scene.sceneManager = self
-                scene.scaleMode = .aspectFill
+                scene.scaleMode = .aspectFit
                 
                 let transition = SKTransition.fade(withDuration: 1.0)
                 presentingView.presentScene(scene, transition: transition)

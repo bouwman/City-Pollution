@@ -19,8 +19,6 @@ class LevelScenePauseState: LevelSceneOverlayState {
     
     override func didEnter(from previousState: GKState?) {
         super.didEnter(from: previousState)
-        
-        levelScene.isPaused = true
     }
     
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {

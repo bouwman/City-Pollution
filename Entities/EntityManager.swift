@@ -22,10 +22,11 @@ class EntityManager: CitizenEntityDelegate {
         let drawPath = GKComponentSystem(componentClass: DrawPathComponent.self)
         let movement = GKComponentSystem(componentClass: MovementComponent.self)
         let destination = GKComponentSystem(componentClass: DestinationComponent.self)
+        let capacity = GKComponentSystem(componentClass: CapacityComponent.self)
         let infiniteMovement = GKComponentSystem(componentClass: InfiniteMovementComponent.self)
         
         // !!!: Order matters!!
-        return [lights, contaminators, health, drawPath, movement, destination, infiniteMovement]
+        return [lights, contaminators, health, drawPath, movement, destination, capacity, infiniteMovement]
     }()
     
     init(scene: SKScene) {

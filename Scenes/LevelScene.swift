@@ -117,7 +117,7 @@ class LevelScene: BaseScene {
         
         // update hud
         pollutionLabel.text = "Pollution: " + player.cityPollution.format(".0")
-        moneyLabel.text = "Money: " + player.money.format("00") + " $"
+        moneyLabel.text = "Support: " + player.money.format("00") + " $"
     }
     
     deinit {
@@ -140,7 +140,8 @@ class LevelScene: BaseScene {
         let location = touches.first!.location(in: self)
         
         if let node = scene?.atPoint(location) {
-            if let input = node.entity?.component(ofType: InputComponent.self) {
+            let entity = node.entity ?? node.parent?.entity ?? node.parent?.parent?.entity
+            if let input = entity?.component(ofType: InputComponent.self) {
                 movingNode = node
                 input.beginTouchAt(point: location)
             }

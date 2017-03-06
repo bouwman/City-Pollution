@@ -14,6 +14,10 @@ class HouseEntity: GKEntity {
         return component(ofType: GKSKNodeComponent.self)!
     }
     
+    var capacityComponent: CapacityComponent {
+        return component(ofType: CapacityComponent.self)!
+    }
+    
     var node: HouseNode {
         return renderComponent.node as! HouseNode
     }

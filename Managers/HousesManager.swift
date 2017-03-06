@@ -23,7 +23,6 @@ class HousesManager {
     var delegate: HousesManagerDelegate!
     
     private var lastSpawnTime: TimeInterval = 0
-    private lazy var randomGen: GKRandomDistribution = GKRandomDistribution(lowestValue: 0, highestValue: self.houses.count - 1)
     
     init(houses: [HouseEntity], spawnInterval: TimeInterval) {
         self.houses = houses
@@ -33,12 +32,20 @@ class HousesManager {
     func update(totalTime: TimeInterval) {
         let deltaTime = totalTime - lastSpawnTime
         if deltaTime > spawnInterval {
+            let freeHouses = houses.filter({ (house) -> Bool in
+                return house.capacityComponent.isNotEmpty
+            })
+            
+            guard freeHouses.count > 0 else { return }
+
+            let randomGen = GKRandomDistribution(lowestValue: 0, highestValue: freeHouses.count - 1)
+            let houseToSpawnFrom = freeHouses[randomGen.nextInt()]
+            let newCitizen = dataSource.housesManager(self, citizenForHouse: houseToSpawnFrom)
+            
+            houseToSpawnFrom.capacityComponent.curCapacity -= 1
+            
             lastSpawnTime = totalTime
             
-            // Pick a random house
-            let house = houses[randomGen.nextInt()]
-            
-            let newCitizen = dataSource.housesManager(self, citizenForHouse: house)
             delegate.housesManager(self, didSpawnCitizen: newCitizen)
         }
     }
