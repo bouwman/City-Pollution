@@ -13,11 +13,11 @@ class PollutionEntity: GKEntity {
         return component(ofType: PollutionComponent.self)!
     }
     
-    init(player: Player, node: SKNode) {
+    init(levelManager: LevelManager, node: SKNode) {
         super.init()
         
         let render = GKSKNodeComponent(node: node)
-        let pollution = PollutionComponent(player: player)
+        let pollution = PollutionComponent(levelManager: levelManager)
         
         addComponent(render)
         addComponent(pollution)

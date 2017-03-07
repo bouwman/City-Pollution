@@ -8,6 +8,28 @@
 
 import GameplayKit
 
+enum CitizenType {
+    case normal, child, old, asthma
+    
+    var decreaseFactor: Double {
+        switch self {
+        case .normal:
+            return Const.Citizens.TypesFactors.normal
+        case .child:
+            return Const.Citizens.TypesFactors.child
+        case .old:
+            return Const.Citizens.TypesFactors.old
+        case .asthma:
+            return Const.Citizens.TypesFactors.asthma
+        }
+    }
+    
+    var increaseFactor: Double {
+        // TODO: Increase depending on decrease factor
+        return Const.Citizens.increaseFactorFine
+    }
+}
+
 protocol CitizenEntityDelegate {
     func citizenEnitityDidArriveAtDestination(citizen: CitizenEntity)
     func citizenEnitityDidDie(citizen: CitizenEntity)
@@ -15,29 +37,37 @@ protocol CitizenEntityDelegate {
 
 class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDelegate {
     var delegate: CitizenEntityDelegate?
-    let player: Player
+    let levelManager: LevelManager
     
     var renderComponent: GKSKNodeComponent {
         return component(ofType: GKSKNodeComponent.self)!
     }
     
-    init(player: Player, healthIncreaseFactor: Double, healthDecreaseFactor: Double, node: SKNode, possibleDestinations: [GKEntity], destinationChildNodeName: String?, obstacles: [GKEntity]) {
-        self.player = player
+    private lazy var sprite: SKSpriteNode = {
+        let sprite = SKSpriteNode(imageNamed: "citizen")
+        sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite.size.height / 2)
+        sprite.xScale = 0.8
+        sprite.yScale = 0.8
+        
+        return sprite
+    }()
+    
+    init(type: CitizenType, levelManager: LevelManager, possibleDestinations: [GKEntity], obstacles: [GKEntity]) {
+        self.levelManager = levelManager
         
         super.init()
         
         self.obstacles = obstacles
         
         let path = PathComponent()
-        let render = GKSKNodeComponent(node: node)
-        let collision = CollisionComponent(node: node, category: Const.Physics.Category.citizens, pinned: false)
+        let render = GKSKNodeComponent(node: sprite)
+        let collision = CollisionComponent(node: sprite, category: Const.Physics.Category.citizens, pinned: false)
         let drawPath = DrawPathComponent()
         let input = InputComponent()
-        let destination = DestinationComponent(possibleDestinations: possibleDestinations, childNodeName: destinationChildNodeName)
+        let destination = DestinationComponent(possibleDestinations: possibleDestinations)
         let movement = createMovementComponentWith(renderComponent: render)
-        let pollution = PollutionComponent(player: player)
-        let maxHealth = 100000.0
-        let health = HealthComponent(maxHealth: maxHealth, decreaseFactor: healthDecreaseFactor, startHealthPercent: 0.5, increaseFactor: healthIncreaseFactor * (maxHealth / 1000))
+        let pollution = PollutionComponent(levelManager: levelManager)
+        let health = HealthComponent(maxHealth: Const.Citizens.maxHealth, decreaseFactor: type.decreaseFactor, startHealthPercent: Const.Citizens.startHealthPercent, increaseFactor: type.increaseFactor * Const.Citizens.increaseFactor)
         
         movement.delegate = render
         destination.delegate = self
@@ -105,8 +135,6 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
             if capacityComponent.isNotFull {
                 capacityComponent.curCapacity += 1
                 delegate?.citizenEnitityDidArriveAtDestination(citizen: self)
-                // TODO: change money based on recreation level
-                player.money += 10
             } else {
                 // TODO: make the entity wait
             }
@@ -125,7 +153,6 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
             break
         case .dead:
             delegate?.citizenEnitityDidDie(citizen: self)
-            player.money -= 20
         }
         
     }

@@ -19,11 +19,11 @@ class LevelScene: BaseScene {
     
     var entityManager: EntityManager!
     var citizenSpawner: HousesManager!
+    var levelManager: LevelManager!
     
     var obstacles = [GKEntity]()
     var buildings = [GKEntity]()
     var houses = [HouseEntity]()
-    let player = Player(cityPollutionMax: 200)
     
     lazy var stateMachine: GKStateMachine = GKStateMachine(states: [
         LevelSceneActiveState(levelScene: self),
@@ -52,12 +52,14 @@ class LevelScene: BaseScene {
         
         physicsWorld.contactDelegate = self
         
-        entityManager = EntityManager(scene: self)
+        let houseCount = childNode(withName: Const.Nodes.Layers.buildings)!.children.filter({$0.name == Const.Nodes.house}).count
+        let citizensPerHouse = levelManager.configuration.citizenCount / houseCount
+        let pollutionPerHouse = levelManager.configuration.pollutionLight / Double(houseCount)
         
         for layerNode in children {
             for child in layerNode.children {
                 if let house = child as? HouseNode {
-                    let entity = HouseEntity(player: player, node: house, maxCapacity: 5)
+                    let entity = HouseEntity(levelManager: levelManager, node: house, maxCapacity: citizensPerHouse, pollutionInput: pollutionPerHouse)
                     houses.append(entity)
                     buildings.append(entity)
                     obstacles.append(entity)
@@ -112,12 +114,12 @@ class LevelScene: BaseScene {
         citizenSpawner.update(totalTime: totalTimeInterval)
         
         // reset city pollution so it can be recalculated each time
-        player.cityPollution = 0
+        levelManager.cityPollution = 1
         entityManager.update(deltaTime)
         
         // update hud
-        pollutionLabel.text = "Pollution: " + player.cityPollution.format(".0")
-        moneyLabel.text = "Support: " + player.money.format("00") + " $"
+        pollutionLabel.text = "Pollution: " + levelManager.cityPollution.format(".0")
+        moneyLabel.text = "Support: " + levelManager.money.format(".0") + " $"
     }
     
     deinit {
@@ -232,11 +234,11 @@ extension LevelScene: SKPhysicsContactDelegate {
         let isSecondCar = secondBody.categoryBitMask == Const.Physics.Category.cars
         
         if isFirstCitizen && isSecondCar {
-            entityManager.remove(firstBody.node!.entity!)
-            SoundManager.sharedInstance.playSound(.overrun, inScene: self)
+            let citizen = firstBody.node!.entity! as! CitizenEntity
+            citizen.delegate?.citizenEnitityDidDie(citizen: citizen)
         } else if isFirstCar && isSecondCitizen {
-            entityManager.remove(secondBody.node!.entity!)
-            SoundManager.sharedInstance.playSound(.overrun, inScene: self)
+            let citizen = secondBody.node!.entity! as! CitizenEntity
+            citizen.delegate?.citizenEnitityDidDie(citizen: citizen)
         }
     }
 }
@@ -246,14 +248,10 @@ extension LevelScene: SKPhysicsContactDelegate {
 extension LevelScene: HousesManagerDataSource {
     func housesManager(_ housesManager: HousesManager, citizenForHouse house: HouseEntity) -> CitizenEntity {
         let houseSprite = house.renderComponent.node as! HouseNode
-        let sprite = SKSpriteNode(imageNamed: "citizen")
-        sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite.size.height / 2)
-        sprite.position = houseSprite.doorPosition
-        sprite.xScale = 0.8
-        sprite.yScale = 0.8
+        let citizen = CitizenEntity(type: .normal, levelManager: levelManager, possibleDestinations: houses, obstacles: obstacles)
         
-        let citizen = CitizenEntity(player: player, healthIncreaseFactor: 0.3, healthDecreaseFactor: 1.0, node: sprite, possibleDestinations: houses, destinationChildNodeName: Const.Nodes.Houses.door, obstacles: obstacles)
-        citizen.delegate = entityManager
+        citizen.renderComponent.node.position = houseSprite.entryAreaPosition
+        citizen.delegate = levelManager
         
         return citizen
     }
@@ -279,10 +277,3 @@ extension LevelScene: HousesManagerDelegate {
     }
 }
 
-class LevelManager {
-    let scene: LevelScene
-    
-    init(scene: LevelScene) {
-        self.scene = scene
-    }
-}

@@ -21,11 +21,11 @@ class DoorNode: SKSpriteNode {
 }
 
 class HouseNode: SKSpriteNode {
-    var door: SKSpriteNode {
-        return childNode(withName: Const.Nodes.Houses.door) as! SKSpriteNode
+    var entryArea: SKSpriteNode {
+        return childNode(withName: Const.Nodes.destination) as! SKSpriteNode
     }
-    var doorPosition: CGPoint {
-        return convert(self.door.position, to: self.parent!)
+    var entryAreaPosition: CGPoint {
+        return convert(self.entryArea.position, to: self.parent!)
     }
     var windows: [WindowNode] {
         var windowNodes = [WindowNode]()

@@ -9,7 +9,7 @@
 import GameplayKit
 import SpriteKit
 
-class EntityManager: CitizenEntityDelegate {
+class EntityManager {
     
     var entities = Set<GKEntity>()
     let scene: SKScene
@@ -113,16 +113,5 @@ class EntityManager: CitizenEntityDelegate {
         for componentSystem in componentSystems {
             componentSystem.removeComponent(foundIn: entity)
         }
-    }
-    
-    // MARK: - CitizenEntityDelegate
-    
-    func citizenEnitityDidArriveAtDestination(citizen: CitizenEntity) {
-        SoundManager.sharedInstance.playSound(.coin, inScene: scene)
-        remove(citizen)
-    }
-    
-    func citizenEnitityDidDie(citizen: CitizenEntity) {
-        remove(citizen)
     }
 }

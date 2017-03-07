@@ -21,11 +21,17 @@ class SceneManager {
         self.presentingView = presentingView
     }
     
+    lazy var firstLevelConfig = LevelConfiguration(pollutionIndustry: 0, pollutionLight: 80, pollutionTransport: 0, citizenCount: 40)
+    
     func present(scene identifier: SceneIdentifier) {
         switch identifier {
         case .level(_), .currentLevel:
-            if let scene = SKScene(fileNamed: "LevelScene") as? BaseScene {
+            if let scene = SKScene(fileNamed: "LevelScene") as? LevelScene {
                 scene.sceneManager = self
+                
+                scene.entityManager = EntityManager(scene: scene)
+                scene.levelManager = LevelManager(scene: scene, configuration: firstLevelConfig)
+                
                 scene.scaleMode = .aspectFit
                 
                 let transition = SKTransition.fade(withDuration: 1.0)
@@ -36,8 +42,5 @@ class SceneManager {
         default:
             break
         }
-        
-        
-        
     }
 }

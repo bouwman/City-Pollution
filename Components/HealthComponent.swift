@@ -37,6 +37,10 @@ class HealthComponent: GKComponent {
         }
     }
     
+    var curHealthPercent: Double {
+        return curHealth / maxHealth
+    }
+    
     private var oldHealth: Double
     
     init(maxHealth: Double, decreaseFactor: Double, startHealthPercent: Double, increaseFactor: Double) {
@@ -55,11 +59,11 @@ class HealthComponent: GKComponent {
         oldHealth = curHealth
         
         if let pollutionComponent = entity?.component(ofType: PollutionComponent.self) {
-            let player = pollutionComponent.player
-            if isRegenerating {
-                curHealth += player.cityPollutionMax / player.cityPollution * increaseFactor
+            let levelManager = pollutionComponent.levelManager
+            if isRegenerating && isInRegenerationZone {
+                curHealth += 1 / levelManager.cityPollution * increaseFactor
             } else {
-                curHealth -= player.cityPollution * decreaseFactor
+                curHealth -= levelManager.cityPollution * decreaseFactor
             }
         }
         switch curHealth {
@@ -100,6 +104,13 @@ class HealthComponent: GKComponent {
             healthBar.zRotation = -node.zRotation
             node.addChild(healthBar)
         }
+    }
+    
+    private var isInRegenerationZone: Bool {
+        guard let node = entity?.component(ofType: GKSKNodeComponent.self)?.node else { return false }
+        guard let regenerationZone = node.scene?.childNode(withName: Const.Nodes.Layers.board)?.childNode(withName: Const.Nodes.regenerationZone) else { return false }
+        
+        return regenerationZone.contains(node.position)
     }
     
     required init?(coder aDecoder: NSCoder) {

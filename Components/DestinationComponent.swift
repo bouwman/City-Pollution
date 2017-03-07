@@ -14,13 +14,11 @@ protocol DestinationComponentDelegate {
 
 class DestinationComponent: GKComponent {
     var possibleDestinations: [GKEntity]
-    var childNodeName: String?
     var destination: GKEntity?
     var delegate: DestinationComponentDelegate?
     
-    init(possibleDestinations: [GKEntity], childNodeName: String? = nil) {
+    init(possibleDestinations: [GKEntity]) {
         self.possibleDestinations = possibleDestinations
-        self.childNodeName = childNodeName
         
         super.init()
     }
@@ -32,7 +30,7 @@ class DestinationComponent: GKComponent {
             var destPoint = point
             var nodeToTest = destNode
             
-            if let childName = childNodeName, let childNode = destNode.childNode(withName: childName) {
+            if let childNode = destNode.childNode(withName: Const.Nodes.destination) {
                 destPoint = destNode.parent!.convert(point, to: destNode)
                 nodeToTest = childNode
             }
@@ -67,7 +65,7 @@ class DestinationComponent: GKComponent {
         
         var destPoint = entityNode.position
         
-        if let childName = childNodeName, let childNode = destNode.childNode(withName: childName) {
+        if let childNode = destNode.childNode(withName: Const.Nodes.destination) {
             destPoint = destNode.parent!.convert(destPoint, to: destNode)
             destNode = childNode
         }

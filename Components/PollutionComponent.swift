@@ -9,10 +9,10 @@
 import GameplayKit
 
 class PollutionComponent: GKComponent {
-    let player: Player
+    let levelManager: LevelManager
     
-    init(player: Player) {
-        self.player = player
+    init(levelManager: LevelManager) {
+        self.levelManager = levelManager
         
         super.init()
     }
@@ -22,18 +22,7 @@ class PollutionComponent: GKComponent {
     }
     
     func addToPollution(input: Double) {
-        player.cityPollution += input
+        levelManager.cityPollution += input
         // TODO: Add delegate to inform about max pollution reached = game over
-    }
-}
-
-class Player {
-    var cityPollution: Double = 0
-    var money: Int = 0
-    
-    var cityPollutionMax: Double
-    
-    init(cityPollutionMax: Double) {
-        self.cityPollutionMax = cityPollutionMax
     }
 }
