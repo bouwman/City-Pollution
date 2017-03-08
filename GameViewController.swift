@@ -20,7 +20,7 @@ class GameViewController: UIViewController {
         if let view = self.view as! SKView? {
             sceneManager = SceneManager(presentingView: view)
             
-            sceneManager.present(scene: .level(1))
+            sceneManager.present(scene: .home)
             
             view.ignoresSiblingOrder = true
             

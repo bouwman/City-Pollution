@@ -13,6 +13,7 @@ struct LevelConfiguration {
     var pollutionLight: Double
     var pollutionTransport: Double
     var citizenCount: Int
+    var citizenSpawnInterval: TimeInterval
 }
 
 class LevelManager: CitizenEntityDelegate {

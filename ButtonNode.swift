@@ -16,6 +16,7 @@ protocol ButtonNodeResponderType: class {
 
 /// The complete set of button identifiers supported in the app.
 enum ButtonIdentifier: String {
+    case city
     case pause
     case resume
     case home
@@ -23,7 +24,7 @@ enum ButtonIdentifier: String {
     case cancel
     
     /// Convenience array of all available button identifiers.
-    static let allButtonIdentifiers: [ButtonIdentifier] = [pause, .resume, .home, .retry, .cancel]
+    static let allButtonIdentifiers: [ButtonIdentifier] = [.city, .pause, .resume, .home, .retry, .cancel]
     
     /// The name of the texture to use for a button when the button is selected.
     var selectedTextureName: String? {

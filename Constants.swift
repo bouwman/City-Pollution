@@ -26,6 +26,7 @@ struct Const {
     struct Nodes {
         static let healthBar = "health bar"
         static let destination = "destination"
+        static let destinationSetZone = "destination set zone"
         static let regenerationZone = "regeneration zone"
         static let house = "house"
         
@@ -47,6 +48,7 @@ struct Const {
         static let increaseFactor = Citizens.maxHealth / 10
         static let increaseFactorFine = 1.0
         static let minEarning = 10.0
+        static let yDistanceAfterSpawn = CGFloat(0.0)
         
         struct TypesFactors {
             static let normal = 1.0

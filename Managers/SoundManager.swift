@@ -17,7 +17,7 @@ class SoundManager {
     private let playOverrun = SKAction.playSoundFileNamed("overrun.caf", waitForCompletion: false)
     private let playClick = SKAction.playSoundFileNamed("click.caf", waitForCompletion: false)
     
-    weak var currentScene: BaseScene?
+    weak var currentScene: SKScene?
     
     static let sharedInstance = SoundManager()
     

@@ -76,7 +76,7 @@ class LevelScene: BaseScene {
 
         }
         
-        citizenSpawner = HousesManager(houses: houses, spawnInterval: 15)
+        citizenSpawner = HousesManager(houses: houses, spawnInterval: levelManager.configuration.citizenSpawnInterval)
         citizenSpawner.dataSource = self
         citizenSpawner.delegate = self
         
@@ -262,16 +262,16 @@ extension LevelScene: HousesManagerDataSource {
 extension LevelScene: HousesManagerDelegate {
     func housesManager(_ housesManager: HousesManager, didSpawnCitizen citizen: CitizenEntity) {
         // Make citizen move away from door
-        if let pathComponent = citizen.component(ofType: PathComponent.self) {
-            pathComponent.clearMovingPoints()
-            
-            let sprite = citizen.renderComponent.node as! SKSpriteNode
-            let firstPoint = sprite.position
-            let secondPoint = CGPoint(x: firstPoint.x, y: firstPoint.y - sprite.size.height - 10)
-            
-            pathComponent.addMovingPoint(point: firstPoint)
-            pathComponent.addMovingPoint(point: secondPoint)
-        }
+        guard let pathComponent = citizen.component(ofType: PathComponent.self) else { return }
+        
+        pathComponent.clearMovingPoints()
+        
+        let sprite = citizen.renderComponent.node as! SKSpriteNode
+        let firstPoint = sprite.position
+        let secondPoint = CGPoint(x: firstPoint.x, y: firstPoint.y - sprite.size.height - Const.Citizens.yDistanceAfterSpawn)
+        
+        pathComponent.addMovingPoint(point: firstPoint)
+        pathComponent.addMovingPoint(point: secondPoint)
         
         entityManager.add(citizen)
     }

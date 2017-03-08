@@ -21,24 +21,33 @@ class SceneManager {
         self.presentingView = presentingView
     }
     
-    lazy var firstLevelConfig = LevelConfiguration(pollutionIndustry: 0, pollutionLight: 80, pollutionTransport: 0, citizenCount: 40)
+    lazy var firstLevelConfig = LevelConfiguration(pollutionIndustry: 0, pollutionLight: 80, pollutionTransport: 0, citizenCount: 40, citizenSpawnInterval: 10)
     
     func present(scene identifier: SceneIdentifier) {
         switch identifier {
         case .level(_), .currentLevel:
-            if let scene = SKScene(fileNamed: "LevelScene") as? LevelScene {
-                scene.sceneManager = self
-                
-                scene.entityManager = EntityManager(scene: scene)
-                scene.levelManager = LevelManager(scene: scene, configuration: firstLevelConfig)
-                
-                scene.scaleMode = .aspectFit
-                
-                let transition = SKTransition.fade(withDuration: 1.0)
-                presentingView.presentScene(scene, transition: transition)
-                
-                SoundManager.sharedInstance.currentScene = scene
-            }
+            guard let scene = SKScene(fileNamed: "LevelScene") as? LevelScene else { break }
+            scene.sceneManager = self
+            
+            scene.entityManager = EntityManager(scene: scene)
+            scene.levelManager = LevelManager(scene: scene, configuration: firstLevelConfig)
+            
+            scene.scaleMode = .aspectFit
+            
+            let transition = SKTransition.fade(withDuration: 1.0)
+            presentingView.presentScene(scene, transition: transition)
+            
+            SoundManager.sharedInstance.currentScene = scene
+        case .home:
+            guard let scene = SKScene(fileNamed: "WorldScene") as? WorldScene else { break }
+            scene.sceneManager = self
+            
+            scene.scaleMode = .aspectFit
+            
+            let transition = SKTransition.fade(withDuration: 1.0)
+            presentingView.presentScene(scene, transition: transition)
+            
+            SoundManager.sharedInstance.currentScene = scene
         default:
             break
         }

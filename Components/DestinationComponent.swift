@@ -30,7 +30,7 @@ class DestinationComponent: GKComponent {
             var destPoint = point
             var nodeToTest = destNode
             
-            if let childNode = destNode.childNode(withName: Const.Nodes.destination) {
+            if let childNode = destNode.childNode(withName: Const.Nodes.destinationSetZone) {
                 destPoint = destNode.parent!.convert(point, to: destNode)
                 nodeToTest = childNode
             }

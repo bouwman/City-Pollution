@@ -95,9 +95,19 @@ class BaseScene: SKScene {
             nativeSize = size
         }
         
-        let camera = SKCameraNode()
-        self.camera = camera
-        addChild(camera)
+        if self.camera == nil {
+            let camera = SKCameraNode()
+            self.camera = camera
+            addChild(camera)
+        }
+        
+        let width = size.width
+        let height = size.height
+        let xRange = SKRange(lowerLimit: -width, upperLimit: width)
+        let yRange = SKRange(lowerLimit: -height, upperLimit: height)
+        let constraint = SKConstraint.positionX(xRange, y: yRange)
+        
+        camera!.constraints = [constraint]
         
         updateCameraScale()
     }
