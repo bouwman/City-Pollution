@@ -26,6 +26,7 @@ class HealthComponent: GKComponent {
     var increaseFactor: Double
     var isRegenerating: Bool
     var delegate: HealthComponentDelegate?
+    var healthBar: HealthBar?
     
     private(set) var curHealth: Double {
         didSet {
@@ -61,7 +62,8 @@ class HealthComponent: GKComponent {
         if let pollutionComponent = entity?.component(ofType: PollutionComponent.self) {
             let levelManager = pollutionComponent.levelManager
             if isRegenerating && isInRegenerationZone {
-                curHealth += 1 / levelManager.cityPollution * increaseFactor
+                let upgradeFactor = upgradeComponent?.currentUpgrade.factor ?? 1.0
+                curHealth += 1 / levelManager.cityPollution * increaseFactor * upgradeFactor
             } else {
                 curHealth -= levelManager.cityPollution * decreaseFactor
             }
@@ -77,32 +79,36 @@ class HealthComponent: GKComponent {
         }
         
         if let renderComponent = entity?.component(ofType: GKSKNodeComponent.self) {
-            if let sprite = renderComponent.node as? SKSpriteNode {
-                updateHealthColorFor(node: sprite)
-//                updateHealthBarFor(node: sprite)
+            if let sprite = renderComponent.node as? CitizenNode {
+                let percent = curHealth / maxHealth
+                sprite.updateSpriteWith(healthLevel: percent)
+                updateHealthBarWith(healthLevel: percent, forNode: sprite)
             }
         }
     }
     
-    private  func updateHealthColorFor(node: SKSpriteNode) {
+    private  func updateHealthColorWith(healthLevel: Double, forNode node: SKSpriteNode) {
         node.colorBlendFactor = 1.0
         node.color = UIColor(hue: 0.0, saturation: CGFloat(1 - curHealth / maxHealth), brightness: 1.0, alpha: 1.0)
     }
     
-    private func updateHealthBarFor(node: SKSpriteNode) {
-        let width = node.size.width * CGFloat(curHealth / maxHealth)
-        
-        if let existingHealthBar = node.childNode(withName: Const.Nodes.healthBar) as? SKSpriteNode {
-            existingHealthBar.size.width = width
-            existingHealthBar.zRotation = -node.zRotation
+    private func updateHealthBarWith(healthLevel: Double, forNode node: SKSpriteNode) {
+        if let healthBar = healthBar {
+            healthBar.curPercent = healthLevel
+            healthBar.position.x = node.position.x
+            healthBar.position.y = node.position.y + node.size.height / 2 + Const.Citizens.healthBarDistance
         } else {
-            let height: CGFloat = 5.0
-            let healthBar = SKSpriteNode(color: UIColor.red, size: CGSize(width: width, height: height))
-            healthBar.position.y = node.size.height / 2.0 + height
-            healthBar.zPosition = 2
-            healthBar.name = Const.Nodes.healthBar
-            healthBar.zRotation = -node.zRotation
-            node.addChild(healthBar)
+            let height: CGFloat = Const.Citizens.healthBarHeight
+            let width = node.size.width
+            healthBar = HealthBar(color: UIColor.darkGray, size: CGSize(width: width, height: height))
+            healthBar!.healthBarColor = Const.Citizens.healthBarColor
+            healthBar!.maxWidth = width
+            healthBar!.curPercent = healthLevel
+            healthBar!.position.x = node.position.x
+            healthBar!.position.y = node.position.y + node.size.height / 2 + Const.Citizens.healthBarDistance
+            healthBar!.zPosition = 2
+            healthBar!.name = String(describing: self)
+            node.parent?.addChild(healthBar!)
         }
     }
     
@@ -111,6 +117,13 @@ class HealthComponent: GKComponent {
         guard let regenerationZone = node.scene?.childNode(withName: Const.Nodes.Layers.board)?.childNode(withName: Const.Nodes.regenerationZone) else { return false }
         
         return regenerationZone.contains(node.position)
+    }
+    
+    private var upgradeComponent: UpgradeComponent?  {
+        guard let node = entity?.component(ofType: GKSKNodeComponent.self)?.node else { return nil }
+        guard let regenerationZone = node.scene?.childNode(withName: Const.Nodes.Layers.board)?.childNode(withName: Const.Nodes.regenerationZone) else { return nil }
+        
+        return regenerationZone.entity?.component(ofType: UpgradeComponent.self)
     }
     
     required init?(coder aDecoder: NSCoder) {

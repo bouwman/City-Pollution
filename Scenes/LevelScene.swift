@@ -70,6 +70,14 @@ class LevelScene: BaseScene {
                     child.physicsBody?.collisionBitMask = Const.Physics.Collision.all
                     child.physicsBody?.allowsRotation = false
                     child.physicsBody?.pinned = true
+                    
+                    if child.name == "factory" {
+                        let entity = FactoryEntity(levelManager: levelManager, node: child, pollutionInput: levelManager.configuration.pollutionIndustry, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 300, factor: 0.7, spriteName: ""), Upgrade(money: 300, factor: 0.4, spriteName: ""))
+                        entityManager.add(entity)
+                    }
+                } else if let park = child as? ParkNode {
+                    let entity = ParkEntity(levelManager: levelManager, node: park, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 300, factor: 0.7, spriteName: ""), Upgrade(money: 300, factor: 0.4, spriteName: ""))
+                    entityManager.add(entity)
                 }
             }
             

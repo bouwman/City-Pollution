@@ -17,18 +17,24 @@ protocol InputDelegate {
 class InputComponent: GKComponent, InputDelegate {
 
     func beginTouchAt(point: CGPoint) {
-        if let pathComponent = entity?.component(ofType: PathComponent.self) {
+        guard let entity = entity else { return }
+
+        
+        if let pathComponent = entity.component(ofType: PathComponent.self) {
             pathComponent.clearMovingPoints()
             pathComponent.addMovingPoint(point: point)
         }
-        if let destinationComponent = entity?.component(ofType: DestinationComponent.self) {
+        if let destinationComponent = entity.component(ofType: DestinationComponent.self) {
             destinationComponent.destination = nil
         }
-        if let lightComponent = entity?.component(ofType: LightComponent.self) {
+        if let lightComponent = entity.component(ofType: LightComponent.self) {
             if lightComponent.curLightCount != 0 {
                 lightComponent.curLightCount -= 1
                 SoundManager.sharedInstance.playSound(.click)
             }
+        }
+        if let upgradeComponent = entity.component(ofType: UpgradeComponent.self) {
+            upgradeComponent.tryToUpgrade()
         }
     }
     

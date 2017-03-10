@@ -9,6 +9,22 @@
 import SpriteKit
 
 class CitizenNode: SKSpriteNode {
+    func updateSpriteWith(healthLevel: Double) {
+        switch healthLevel {
+        case Const.Citizens.redRange:
+            run(actionForTexture(image: #imageLiteral(resourceName: "citizen red")))
+        case Const.Citizens.yellowRange:
+            run(actionForTexture(image: #imageLiteral(resourceName: "citizen yellow")))
+        case Const.Citizens.greenRange:
+            run(actionForTexture(image: #imageLiteral(resourceName: "citizen green")))
+        default:
+            fatalError("health level out of bounce")
+        }
+    }
+    
+    private func actionForTexture(image: UIImage) -> SKAction {
+        return SKAction.setTexture(SKTexture(image: image))
+    }
 }
 
 class BuildingNode: SKSpriteNode {
@@ -18,6 +34,8 @@ class WallNode: SKSpriteNode {
 }
 
 class DoorNode: SKSpriteNode {
+}
+class ParkNode: SKSpriteNode {
 }
 
 class HouseNode: SKSpriteNode {
@@ -35,6 +53,28 @@ class HouseNode: SKSpriteNode {
         
         return windowNodes
     }
+}
+
+class HealthBar: SKSpriteNode {
+    var curPercent: Double = 1.0 {
+        didSet {
+            let newWidth = maxWidth * CGFloat(curPercent)
+            healthBarNode.size.width = newWidth
+            healthBarNode.position.x = -(maxWidth - newWidth) / 2
+            healthBarNode.color = healthBarColor
+        }
+    }
+    
+    private lazy var healthBarNode: SKSpriteNode = {
+        let sprite = SKSpriteNode(color: self.healthBarColor, size: self.size)
+        
+        self.addChild(sprite)
+        
+        return sprite
+    }()
+    
+    var maxWidth: CGFloat = 1.0
+    var healthBarColor = UIColor.red
 }
 
 class WindowNode: SKSpriteNode {

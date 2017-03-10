@@ -43,11 +43,11 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
         return component(ofType: GKSKNodeComponent.self)!
     }
     
-    private lazy var sprite: SKSpriteNode = {
-        let sprite = SKSpriteNode(imageNamed: "citizen")
+    lazy var sprite: CitizenNode = {
+        let sprite = CitizenNode(imageNamed: "citizen yellow")
         sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite.size.height / 2)
-        sprite.xScale = 0.8
-        sprite.yScale = 0.8
+        sprite.xScale = 0.2
+        sprite.yScale = 0.2
         
         return sprite
     }()

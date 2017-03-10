@@ -54,6 +54,9 @@ class EntityManager {
                     line.removeFromParent()
                 })
             }
+            if let healthComponent = entity.component(ofType: HealthComponent.self) {
+                healthComponent.healthBar?.removeFromParent()
+            }
             spriteNode.removeFromParent()
         }
         

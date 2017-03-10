@@ -49,12 +49,18 @@ struct Const {
         static let increaseFactorFine = 1.0
         static let minEarning = 10.0
         static let yDistanceAfterSpawn = CGFloat(0.0)
+        static let healthBarDistance = CGFloat(6.0)
+        static let healthBarHeight = CGFloat(5.0)
+        static let healthBarColor = UIColor.green
+        static let greenRange = 0.8...1.0
+        static let yellowRange = 0.3..<0.8
+        static let redRange = 0..<0.3
         
         struct TypesFactors {
-            static let normal = 1.0
-            static let child =  1.3
-            static let old =    1.6
-            static let asthma = 1.9
+            static let normal = 2.0
+            static let child =  2.3
+            static let old =    2.6
+            static let asthma = 2.9
         }
     }
 }
