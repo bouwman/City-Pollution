@@ -22,7 +22,7 @@ class PollutionComponent: GKComponent {
     }
     
     func addToPollution(input: Double) {
-        levelManager.cityPollution += input
+        levelManager.cityPollutionAbs += input
         // TODO: Add delegate to inform about max pollution reached = game over
     }
 }

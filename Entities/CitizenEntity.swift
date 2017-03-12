@@ -26,7 +26,7 @@ enum CitizenType {
     
     var increaseFactor: Double {
         // TODO: Increase depending on decrease factor
-        return Const.Citizens.increaseFactorFine
+        return 1.0
     }
 }
 
@@ -67,7 +67,8 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
         let destination = DestinationComponent(possibleDestinations: possibleDestinations)
         let movement = createMovementComponentWith(renderComponent: render)
         let pollution = PollutionComponent(levelManager: levelManager)
-        let health = HealthComponent(maxHealth: Const.Citizens.maxHealth, decreaseFactor: type.decreaseFactor, startHealthPercent: Const.Citizens.startHealthPercent, increaseFactor: type.increaseFactor * Const.Citizens.increaseFactor)
+        let health = HealthComponent(maxHealth: 1.0, decreaseFactor: type.decreaseFactor, startHealthPercent: Const.Citizens.startHealthPercent, increaseFactor: type.increaseFactor)
+        let event = EventComponent(scene: levelManager.scene)
         
         movement.delegate = render
         destination.delegate = self
@@ -82,6 +83,7 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
         addComponent(movement)
         addComponent(pollution)
         addComponent(health)
+        addComponent(event)
     }
     
     private func obstaclesFor(entities: [GKEntity]) -> [GKPolygonObstacle] {

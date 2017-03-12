@@ -72,11 +72,11 @@ class LevelScene: BaseScene {
                     child.physicsBody?.pinned = true
                     
                     if child.name == "factory" {
-                        let entity = FactoryEntity(levelManager: levelManager, node: child, pollutionInput: levelManager.configuration.pollutionIndustry, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 300, factor: 0.7, spriteName: ""), Upgrade(money: 300, factor: 0.4, spriteName: ""))
+                        let entity = FactoryEntity(levelManager: levelManager, node: child, pollutionInput: levelManager.configuration.pollutionIndustry, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 500, factor: 0.7, spriteName: ""), Upgrade(money: 1000, factor: 0.49, spriteName: ""))
                         entityManager.add(entity)
                     }
                 } else if let park = child as? ParkNode {
-                    let entity = ParkEntity(levelManager: levelManager, node: park, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 300, factor: 0.7, spriteName: ""), Upgrade(money: 300, factor: 0.4, spriteName: ""))
+                    let entity = ParkEntity(levelManager: levelManager, node: park, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 500, factor: 1.3, spriteName: ""), Upgrade(money: 1000, factor: 2.0, spriteName: ""))
                     entityManager.add(entity)
                 }
             }
@@ -116,18 +116,18 @@ class LevelScene: BaseScene {
         lastUpdateTimeInterval = currentTime
         totalTimeInterval += deltaTime
         
-        stateMachine.update(deltaTime: deltaTime)
-        
         // spawn citizens
         citizenSpawner.update(totalTime: totalTimeInterval)
         
         // reset city pollution so it can be recalculated each time
-        levelManager.cityPollution = 1
+        levelManager.cityPollutionAbs = 0
         entityManager.update(deltaTime)
         
+        stateMachine.update(deltaTime: deltaTime)
+        
         // update hud
-        pollutionLabel.text = "Pollution: " + levelManager.cityPollution.format(".0")
-        moneyLabel.text = "Support: " + levelManager.money.format(".0") + " $"
+        pollutionLabel.text = "Pollution: " + levelManager.cityPollutionAbs.format(".0")
+        moneyLabel.text = "Support: " + levelManager.money.format(".0") + " $"        
     }
     
     deinit {

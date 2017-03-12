@@ -24,9 +24,10 @@ class EntityManager {
         let destination = GKComponentSystem(componentClass: DestinationComponent.self)
         let capacity = GKComponentSystem(componentClass: CapacityComponent.self)
         let infiniteMovement = GKComponentSystem(componentClass: InfiniteMovementComponent.self)
-        
+        let upgrade = GKComponentSystem(componentClass: UpgradeComponent.self)
+        let event = GKComponentSystem(componentClass: EventComponent.self)
         // !!!: Order matters!!
-        return [lights, contaminators, health, drawPath, movement, destination, capacity, infiniteMovement]
+        return [lights, contaminators, health, drawPath, movement, destination, capacity, infiniteMovement, upgrade, event]
     }()
     
     init(scene: SKScene) {

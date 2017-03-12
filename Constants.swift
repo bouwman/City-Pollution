@@ -29,6 +29,7 @@ struct Const {
         static let destinationSetZone = "destination set zone"
         static let regenerationZone = "regeneration zone"
         static let house = "house"
+        static let upgrade = "upgrade"
         
         struct Houses {
             static let capacity = "capacity"
@@ -43,24 +44,34 @@ struct Const {
         }
     }
     struct Citizens {
-        static let maxHealth = 400000.0
-        static let startHealthPercent = 0.5
-        static let increaseFactor = Citizens.maxHealth / 10
-        static let increaseFactorFine = 1.0
         static let minEarning = 10.0
         static let yDistanceAfterSpawn = CGFloat(0.0)
+        static let startHealthPercent = 0.5
+        static let healthIncreaseBase = 0.001
+        static let healthDecreaseBase = 0.0003
         static let healthBarDistance = CGFloat(6.0)
         static let healthBarHeight = CGFloat(5.0)
         static let healthBarColor = UIColor.green
         static let greenRange = 0.8...1.0
         static let yellowRange = 0.3..<0.8
         static let redRange = 0..<0.3
+        static let earnRangeNormal = 0.5..<Citizens.greenRange.lowerBound
+        static let earnRangePerfect = Citizens.greenRange
         
         struct TypesFactors {
-            static let normal = 2.0
-            static let child =  2.3
-            static let old =    2.6
-            static let asthma = 2.9
+            static let normal = 1.0
+            static let child =  1.3
+            static let old =    1.6
+            static let asthma = 1.9
+        }
+    }
+    struct Fonts {
+        static let medium = "Helvetica Neue Medium"
+        static let bold = "Helvetica Neue Bold"
+        struct Size {
+            static let small: CGFloat = 12.0
+            static let medium: CGFloat = 18.0
+            static let large: CGFloat = 30.0
         }
     }
 }

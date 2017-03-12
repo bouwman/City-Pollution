@@ -19,12 +19,14 @@ class FactoryEntity: GKEntity {
         let render = GKSKNodeComponent(node: node)
         let input = InputComponent()
         let contaminator = ContaminatorComponent(input: pollutionInput)
+        let pollution = PollutionComponent(levelManager: levelManager)
         let upgrade = UpgradeComponent(levelManager: levelManager, upgrades: upgrades)
         let event = EventComponent(scene: levelManager.scene)
         
         addComponent(render)
         addComponent(input)
         addComponent(contaminator)
+        addComponent(pollution)
         addComponent(upgrade)
         addComponent(event)
     }

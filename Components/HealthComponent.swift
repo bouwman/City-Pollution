@@ -47,7 +47,7 @@ class HealthComponent: GKComponent {
     init(maxHealth: Double, decreaseFactor: Double, startHealthPercent: Double, increaseFactor: Double) {
         self.maxHealth = maxHealth
         self.decreaseFactor = decreaseFactor
-        self.curHealth = maxHealth * startHealthPercent
+        self.curHealth = startHealthPercent
         self.oldHealth = curHealth
         self.isRegenerating = true
         self.increaseFactor = increaseFactor
@@ -63,9 +63,11 @@ class HealthComponent: GKComponent {
             let levelManager = pollutionComponent.levelManager
             if isRegenerating && isInRegenerationZone {
                 let upgradeFactor = upgradeComponent?.currentUpgrade.factor ?? 1.0
-                curHealth += 1 / levelManager.cityPollution * increaseFactor * upgradeFactor
+                let addHealth = Const.Citizens.healthIncreaseBase * increaseFactor * upgradeFactor
+                curHealth += addHealth
             } else {
-                curHealth -= levelManager.cityPollution * decreaseFactor
+                let removeHealth = Const.Citizens.healthDecreaseBase * levelManager.cityPollutionRel * decreaseFactor
+                curHealth -= removeHealth
             }
         }
         switch curHealth {
