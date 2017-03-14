@@ -60,7 +60,7 @@ class TutorialManager: NSObject {
         // Listen for next step
         NotificationCenter.default.add(self, selector: #selector(TutorialManager.didReceiveArriveAtHouseNotification), notification: .arriveAtHouse)
         
-        currentStep = "Move back to earn money"
+        currentStep = "Move back the citizen back to earn support."
         levelScene.stateMachine.enter(LevelSceneInstructionsState.self)
     }
     
@@ -69,7 +69,7 @@ class TutorialManager: NSObject {
         
         NotificationCenter.default.remove(self, forNotification: .arriveAtHouse)
         
-        currentStep = "Great! You earned some support. When you have earned enough support you can upgrade the factory to reduce pollution."
+        currentStep = "Great! You earned some support. When you have earned enough support you can upgrade the factories and the car to reduce the pollution."
         levelScene.stateMachine.enter(LevelSceneInstructionsState.self)
     }
     

@@ -11,6 +11,7 @@ import GameplayKit
 class InfiniteMovementComponent: GKAgent2D {
     let movePoints: [CGPoint]
     let maxPredictionTime: TimeInterval
+    let originalSpeed: Float
     
     private let movePath: GKPath
     
@@ -22,6 +23,7 @@ class InfiniteMovementComponent: GKAgent2D {
         self.movePoints = movePoints
         self.movePath = GKPath(points: movePoints.map { float2($0) }, radius: radius, cyclical: false)
         self.maxPredictionTime = maxPredictionTime
+        self.originalSpeed = maxSpeed
         
         super.init()
         
@@ -46,7 +48,11 @@ class InfiniteMovementComponent: GKAgent2D {
         if node.contains(movePoints.last!) {
             node.position = movePoints.first!
         }
-                
+        
+        if let upgrade = entity?.component(ofType: UpgradeComponent.self) {
+            self.maxSpeed = originalSpeed * Float(upgrade.currentUpgrade.factor)
+        }
+        
         self.behavior = PathBehaviour(path: movePath, maxPredictionTime: maxPredictionTime, targetSpeed: maxSpeed)
     }
 }

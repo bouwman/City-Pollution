@@ -36,7 +36,9 @@ class CarEntity: GKEntity {
         
         let fumes = SKEmitterNode(fileNamed: "Fumes")!
         
-        fumes.position.x = -node.size.width / 2
+        fumes.name = Const.Nodes.contaminatorEmitter
+        fumes.position.x = -node.size.width / 2 - 5
+        fumes.position.y = -node.size.height / 2 + 5
         node.addChild(fumes)
     }
     
