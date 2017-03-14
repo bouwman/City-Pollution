@@ -43,6 +43,7 @@ class HealthComponent: GKComponent {
     }
     
     private var oldHealth: Double
+    private var parkBoarderCrossed = false
     
     init(maxHealth: Double, decreaseFactor: Double, startHealthPercent: Double, increaseFactor: Double) {
         self.maxHealth = maxHealth
@@ -65,6 +66,10 @@ class HealthComponent: GKComponent {
                 let upgradeFactor = upgradeComponent?.currentUpgrade.factor ?? 1.0
                 let addHealth = Const.Citizens.healthIncreaseBase * increaseFactor * upgradeFactor
                 curHealth += addHealth
+                if parkBoarderCrossed == false {
+                    parkBoarderCrossed = true
+                    NotificationCenter.default.post(.arriveAtPark)
+                }
             } else {
                 let removeHealth = Const.Citizens.healthDecreaseBase * levelManager.cityPollutionRel * decreaseFactor
                 curHealth -= removeHealth
@@ -75,6 +80,7 @@ class HealthComponent: GKComponent {
             delegate?.healthComponentens(entity: entity!, didReachHealthLevel: .dead)
         case maxHealth:
             isRegenerating = false
+            NotificationCenter.default.post(.reachMaxHealth)
             delegate?.healthComponentens(entity: entity!, didReachHealthLevel: .best)
         default:
             break

@@ -17,10 +17,9 @@ class WorldScene: BaseScene {
         super.didMove(to: view)
         
         pan = UIPanGestureRecognizer(target: self, action: #selector(WorldScene.handlePan(_:)))
-//        pinch = UIPinchGestureRecognizer(target: self, action: #selector(WorldScene.handlePinch(_:)))
+        pinch = UIPinchGestureRecognizer(target: self, action: #selector(WorldScene.handlePinch(_:)))
         
         view.addGestureRecognizer(pan)
-//        view.addGestureRecognizer(pinch)
         
         createCamera()
     }
@@ -29,7 +28,6 @@ class WorldScene: BaseScene {
         super.willMove(from: view)
         
         view.removeGestureRecognizer(pan)
-//        view.removeGestureRecognizer(pinch)
     }
     
     // MARK: ButtonNodeResponderType

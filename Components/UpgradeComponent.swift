@@ -27,8 +27,8 @@ class UpgradeComponent: GKComponent {
     private lazy var labelNode: SKLabelNode = {
         guard let node = self.entity?.component(ofType: GKSKNodeComponent.self)?.node as? SKSpriteNode else { fatalError("upgrade") }
         let label = SKLabelNode(fontNamed: Const.Fonts.bold)
-        let background = SKSpriteNode(color: UIColor.red, size: CGSize(width: 50, height: 30))
-        let topRight = CGPoint(x: node.size.width / 2 - 20, y: node.size.height / 2 - 10)
+        let background = SKSpriteNode(color: UIColor.red, size: CGSize(width: 30, height: 20))
+        let topRight = CGPoint(x: node.size.width / 2 - 10, y: node.size.height / 2 - 5)
         
         label.position = topRight
         label.fontSize = Const.Fonts.Size.small
@@ -67,7 +67,7 @@ class UpgradeComponent: GKComponent {
         if currentUpgrade != upgrades.last {
             labelNode.text = upgrades[upgrades.index(of: currentUpgrade)! + 1].money.format(".0")
         } else {
-            labelNode.text = "complete"
+            labelNode.text = "done"
             backgroundNode.color = UIColor.green
         }
     }

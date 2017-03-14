@@ -20,14 +20,17 @@ class LevelScene: BaseScene {
     var entityManager: EntityManager!
     var citizenSpawner: HousesManager!
     var levelManager: LevelManager!
+    var tutorialManager: TutorialManager!
     
     var obstacles = [GKEntity]()
     var buildings = [GKEntity]()
     var houses = [HouseEntity]()
     
     lazy var stateMachine: GKStateMachine = GKStateMachine(states: [
+        LevelSceneTutorialState(levelScene: self),
         LevelSceneActiveState(levelScene: self),
         LevelScenePauseState(levelScene: self),
+        LevelSceneInstructionsState(levelScene: self),
         LevelSceneSuccessState(levelScene: self),
         LevelSceneFailState(levelScene: self)
         ])
@@ -46,42 +49,38 @@ class LevelScene: BaseScene {
         
         registerForPauseNotifications()
         
+        SoundManager.sharedInstance.playMusic(music: .level, inScene: self)
+        
+        tutorialManager = TutorialManager(levelScene: self)
+        
         physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
         physicsBody?.categoryBitMask = Const.Physics.Category.bounds
         physicsBody?.collisionBitMask = Const.Physics.Collision.none
         
         physicsWorld.contactDelegate = self
         
-        let houseCount = childNode(withName: Const.Nodes.Layers.buildings)!.children.filter({$0.name == Const.Nodes.house}).count
+        let houseCount = children.filter({$0.name == Const.Nodes.house}).count
         let citizensPerHouse = levelManager.configuration.citizenCount / houseCount
         let pollutionPerHouse = levelManager.configuration.pollutionLight / Double(houseCount)
         
         for layerNode in children {
+            if let house = layerNode as? HouseNode {
+                let entity = HouseEntity(levelManager: levelManager, node: house, maxCapacity: citizensPerHouse, pollutionInput: pollutionPerHouse)
+                houses.append(entity)
+                buildings.append(entity)
+                obstacles.append(entity)
+                entityManager.add(entity)
+            }
+            
             for child in layerNode.children {
-                if let house = child as? HouseNode {
-                    let entity = HouseEntity(levelManager: levelManager, node: house, maxCapacity: citizensPerHouse, pollutionInput: pollutionPerHouse)
-                    houses.append(entity)
-                    buildings.append(entity)
-                    obstacles.append(entity)
+                if child.name == "factory" {
+                    let entity = FactoryEntity(levelManager: levelManager, node: child as! SKSpriteNode, pollutionInput: levelManager.configuration.pollutionIndustry / 2, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 500, factor: 0.7, spriteName: ""), Upgrade(money: 1000, factor: 0.5, spriteName: ""))
                     entityManager.add(entity)
-                } else if layerNode.name == "buildings" {
-                    child.physicsBody = SKPhysicsBody(rectangleOf: child.frame.size)
-                    child.physicsBody?.categoryBitMask = Const.Physics.Category.houses
-                    child.physicsBody?.collisionBitMask = Const.Physics.Collision.all
-                    child.physicsBody?.allowsRotation = false
-                    child.physicsBody?.pinned = true
-                    
-                    if child.name == "factory" {
-                        let entity = FactoryEntity(levelManager: levelManager, node: child, pollutionInput: levelManager.configuration.pollutionIndustry, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 500, factor: 0.7, spriteName: ""), Upgrade(money: 1000, factor: 0.49, spriteName: ""))
-                        entityManager.add(entity)
-                    }
                 } else if let park = child as? ParkNode {
-                    let entity = ParkEntity(levelManager: levelManager, node: park, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 500, factor: 1.3, spriteName: ""), Upgrade(money: 1000, factor: 2.0, spriteName: ""))
+                    let entity = ParkEntity(levelManager: levelManager, node: park)
                     entityManager.add(entity)
                 }
             }
-            
-
         }
         
         citizenSpawner = HousesManager(houses: houses, spawnInterval: levelManager.configuration.citizenSpawnInterval)
@@ -90,11 +89,9 @@ class LevelScene: BaseScene {
         
         addCar()
         
-        stateMachine.enter(LevelSceneActiveState.self)
+        stateMachine.enter(LevelSceneTutorialState.self)
     }
-    
-    var firstUpdateTime: TimeInterval = -1
-    
+        
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
         
@@ -107,14 +104,16 @@ class LevelScene: BaseScene {
             wasPaused = false
         }
         
-        if firstUpdateTime < 0 {
-            firstUpdateTime = currentTime
-        }
-        
         let deltaTime = currentTime - lastUpdateTimeInterval
         
         lastUpdateTimeInterval = currentTime
+        
+        // Initial call
+        guard deltaTime < 16000.0 else { return }
+        
         totalTimeInterval += deltaTime
+        
+        stateMachine.update(deltaTime: deltaTime)
         
         // spawn citizens
         citizenSpawner.update(totalTime: totalTimeInterval)
@@ -123,11 +122,19 @@ class LevelScene: BaseScene {
         levelManager.cityPollutionAbs = 0
         entityManager.update(deltaTime)
         
-        stateMachine.update(deltaTime: deltaTime)
-        
         // update hud
         pollutionLabel.text = "Pollution: " + levelManager.cityPollutionAbs.format(".0")
-        moneyLabel.text = "Support: " + levelManager.money.format(".0") + " $"        
+        moneyLabel.text = "Support: " + levelManager.money.format(".0") + " $"
+    }
+    
+    func updateEnvironmentWithPollution(_ pollution: Double) {
+        
+    }
+    
+    override func willMove(from view: SKView) {
+        super.willMove(from: view)
+        
+        SoundManager.sharedInstance.stopMusic()
     }
     
     deinit {
@@ -137,7 +144,8 @@ class LevelScene: BaseScene {
     private func addCar() {
         let sprite = SKSpriteNode(color: UIColor.black, size: CGSize(width: 60, height: 30))
         let points = [CGPoint(x: -self.size.width / 2 - sprite.size.width, y: 0), CGPoint(x: 0, y: 0), CGPoint(x: self.size.width / 2 + sprite.size.width, y: 0)]
-        let car = CarEntity(node: sprite, movePoints: points)
+        let car = CarEntity(levelManager: levelManager, node: sprite, movePoints: points, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 500, factor: 0.7, spriteName: ""), Upgrade(money: 1000, factor: 0.5, spriteName: ""))
+        sprite.position = points.first!
         
         entityManager.add(car)
     }
@@ -150,6 +158,7 @@ class LevelScene: BaseScene {
         let location = touches.first!.location(in: self)
         
         if let node = scene?.atPoint(location) {
+            guard node.name != Const.Nodes.contaminatorEmitter else { return }
             let entity = node.entity ?? node.parent?.entity ?? node.parent?.parent?.entity
             if let input = entity?.component(ofType: InputComponent.self) {
                 movingNode = node
@@ -192,7 +201,11 @@ class LevelScene: BaseScene {
             stateMachine.enter(LevelScenePauseState.self)
             SoundManager.sharedInstance.playSound(.click, inScene: self)
         case .resume:
-            stateMachine.enter(LevelSceneActiveState.self)
+            if tutorialManager.isActive {
+                stateMachine.enter(LevelSceneTutorialState.self)
+            } else {
+                stateMachine.enter(LevelSceneActiveState.self)
+            }
             SoundManager.sharedInstance.playSound(.click, inScene: self)
         default:
             super.buttonTriggered(button: button)
@@ -206,10 +219,10 @@ class LevelScene: BaseScene {
     func pause(_ pause: Bool) {
         // Do not count seconds when paused
         wasPaused = !pause
-        
+
         entityManager.pause(pause)
         isPaused = pause
-        isUserInteractionEnabled = !pause
+        // isUserInteractionEnabled = !pause
     }    
 }
 

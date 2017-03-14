@@ -46,6 +46,7 @@ class HousesManager {
             
             lastSpawnTime = totalTime
             
+            NotificationCenter.default.post(.spawnCitizen)
             delegate.housesManager(self, didSpawnCitizen: newCitizen)
         }
     }

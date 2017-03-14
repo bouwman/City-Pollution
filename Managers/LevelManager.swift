@@ -50,6 +50,8 @@ class LevelManager: CitizenEntityDelegate {
                 event.nextEventToTrigger = .affectMoney(earnings)
             }
         }
+        NotificationCenter.default.post(.arriveAtHouse)
+        
         scene.entityManager.remove(citizen)
     }
     

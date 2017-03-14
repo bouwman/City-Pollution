@@ -13,10 +13,11 @@ class FactoryEntity: GKEntity {
         return component(ofType: GKSKNodeComponent.self)!
     }
     
-    init(levelManager: LevelManager, node: SKNode, pollutionInput: Double, upgrades: Upgrade...) {
+    init(levelManager: LevelManager, node: SKSpriteNode, pollutionInput: Double, upgrades: Upgrade...) {
         super.init()
         
         let render = GKSKNodeComponent(node: node)
+        let collision = CollisionComponent(node: node, category: Const.Physics.Category.houses, pinned: true)
         let input = InputComponent()
         let contaminator = ContaminatorComponent(input: pollutionInput)
         let pollution = PollutionComponent(levelManager: levelManager)
@@ -24,11 +25,18 @@ class FactoryEntity: GKEntity {
         let event = EventComponent(scene: levelManager.scene)
         
         addComponent(render)
+        addComponent(collision)
         addComponent(input)
         addComponent(contaminator)
         addComponent(pollution)
         addComponent(upgrade)
         addComponent(event)
+        
+        let smoke = SKEmitterNode(fileNamed: "Smoke")!
+        
+        smoke.position.y = node.size.height / 2
+        smoke.name = Const.Nodes.contaminatorEmitter
+        node.addChild(smoke)
     }
     
     required init?(coder aDecoder: NSCoder) {

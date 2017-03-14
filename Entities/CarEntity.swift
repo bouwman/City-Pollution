@@ -11,20 +11,33 @@ import GameplayKit
 class CarEntity: GKEntity {
     var movePoints: [CGPoint]
     
-    init(node: SKNode, movePoints: [CGPoint]) {
+    init(levelManager: LevelManager, node: SKSpriteNode, movePoints: [CGPoint], upgrades: Upgrade...) {
         self.movePoints = movePoints
         
         super.init()
         
         let render = GKSKNodeComponent(node: node)
         let collision = CollisionComponent(node: node, category: Const.Physics.Category.cars, pinned: false, collideWith: Const.Physics.Collision.cars)
+        let pollution = PollutionComponent(levelManager: levelManager)
+        let contaminator = ContaminatorComponent(input: levelManager.configuration.pollutionTransport)
+        let input = InputComponent()
         let movement = createMovementComponentWith(movePoints: movePoints)
+        let upgrade = UpgradeComponent(levelManager: levelManager, upgrades: upgrades)
         
         movement.delegate = render
         
         addComponent(collision)
         addComponent(render)
+        addComponent(pollution)
+        addComponent(contaminator)
+        addComponent(input)
         addComponent(movement)
+        addComponent(upgrade)
+        
+        let fumes = SKEmitterNode(fileNamed: "Fumes")!
+        
+        fumes.position.x = -node.size.width / 2
+        node.addChild(fumes)
     }
     
     required init?(coder aDecoder: NSCoder) {

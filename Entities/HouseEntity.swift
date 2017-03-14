@@ -22,7 +22,7 @@ class HouseEntity: GKEntity {
         return renderComponent.node as! HouseNode
     }
     
-    init(levelManager: LevelManager, node: SKNode, maxCapacity: Int, pollutionInput: Double) {
+    init(levelManager: LevelManager, node: SKSpriteNode, maxCapacity: Int, pollutionInput: Double) {
         super.init()
                 
         let render = GKSKNodeComponent(node: node)
@@ -32,7 +32,7 @@ class HouseEntity: GKEntity {
         let pollution = PollutionComponent(levelManager: levelManager)
         let contaminator = ContaminatorComponent(input: pollutionInput)
         let houseNode = render.node as! HouseNode
-        let lights = LightComponent(maxLightCount: houseNode.windows.count, turnOnTimeRange: 5...20)
+        let lights = LightComponent(maxLightCount: houseNode.windows.count, turnOnTimeRange: 11...20)
         
         addComponent(render)
         addComponent(collision)

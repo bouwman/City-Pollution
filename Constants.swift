@@ -30,6 +30,8 @@ struct Const {
         static let regenerationZone = "regeneration zone"
         static let house = "house"
         static let upgrade = "upgrade"
+        static let instructionsBackground = "instructions background"
+        static let contaminatorEmitter = "contaminator emitter"
         
         struct Houses {
             static let capacity = "capacity"
@@ -74,8 +76,35 @@ struct Const {
             static let large: CGFloat = 30.0
         }
     }
+    struct Notifications {
+        static let arriveAtPark = "arrive at park"
+        static let reachMaxHealth = "reach max health"
+        static let arriveAtHouse = "arrive at house"
+    }
 }
 
 enum WorldLayer: CGFloat {
     case board = -100, buildings = -25, characters = 0, aboveCharacters = 1000, hud = 1100, top = 1200
+}
+
+enum NotificationType: String {
+    case spawnCitizen
+    case arriveAtPark
+    case turnOnLight
+    case reachMaxHealth
+    case arriveAtHouse
+}
+
+extension NotificationCenter {
+    func post(_ notification: NotificationType) {
+        self.post(name: Notification.Name(rawValue: notification.rawValue), object: nil)
+    }
+    
+    func add(_ observer: Any, selector: Selector, notification: NotificationType) {
+        self.addObserver(observer, selector: selector, name: Notification.Name(rawValue: notification.rawValue), object: nil)
+    }
+    
+    func remove(_ observer: Any, forNotification notification: NotificationType) {
+        self.removeObserver(observer, name: Notification.Name(rawValue: notification.rawValue), object: nil)
+    }
 }

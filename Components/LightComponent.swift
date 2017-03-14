@@ -65,6 +65,7 @@ class LightComponent: GKComponent {
             if displayedLights < curLightCount {
                 window.lightOn = true
                 displayedLights += 1
+                NotificationCenter.default.post(.turnOnLight)
             } else {
                 window.lightOn = false
             }

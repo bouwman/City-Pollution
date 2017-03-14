@@ -22,7 +22,7 @@ class LevelScenePauseState: LevelSceneOverlayState {
     }
     
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
-        return stateClass is LevelSceneActiveState.Type
+        return stateClass is LevelSceneActiveState.Type || stateClass is LevelSceneTutorialState.Type
     }
     
     override func willExit(to nextState: GKState) {

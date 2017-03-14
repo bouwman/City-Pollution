@@ -13,17 +13,15 @@ class ParkEntity: GKEntity {
         return component(ofType: GKSKNodeComponent.self)!
     }
     
-    init(levelManager: LevelManager, node: SKNode, upgrades: Upgrade...) {
+    init(levelManager: LevelManager, node: SKNode) {
         super.init()
         
         let render = GKSKNodeComponent(node: node)
         let input = InputComponent()
-        let upgrade = UpgradeComponent(levelManager: levelManager, upgrades: upgrades)
         let event = EventComponent(scene: levelManager.scene)
         
         addComponent(render)
         addComponent(input)
-        addComponent(upgrade)
         addComponent(event)
     }
     

@@ -28,6 +28,10 @@ enum CitizenType {
         // TODO: Increase depending on decrease factor
         return 1.0
     }
+    
+    var sprite: String {
+        return ""
+    }
 }
 
 protocol CitizenEntityDelegate {
@@ -46,6 +50,7 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
     lazy var sprite: CitizenNode = {
         let sprite = CitizenNode(imageNamed: "citizen yellow")
         sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite.size.height / 2)
+        sprite.zPosition = WorldLayer.characters.rawValue
         sprite.xScale = 0.2
         sprite.yScale = 0.2
         

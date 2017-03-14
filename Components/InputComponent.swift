@@ -19,7 +19,6 @@ class InputComponent: GKComponent, InputDelegate {
     func beginTouchAt(point: CGPoint) {
         guard let entity = entity else { return }
 
-        
         if let pathComponent = entity.component(ofType: PathComponent.self) {
             pathComponent.clearMovingPoints()
             pathComponent.addMovingPoint(point: point)

@@ -28,5 +28,15 @@ class ContaminatorComponent: GKComponent {
         if let pollutionComponent = entity?.component(ofType: PollutionComponent.self) {
             pollutionComponent.addToPollution(input: input * factor)
         }
+        
+        if let node = entity?.component(ofType: GKSKNodeComponent.self)?.node {
+            if let emitter = node.childNode(withName: Const.Nodes.contaminatorEmitter) as? SKEmitterNode {
+                if factor > 0.5 {
+                    emitter.particleColorBlendFactor = factor < 0.8 ? 0.0 : 1.0
+                } else {
+                    emitter.removeFromParent()
+                }
+            }
+        }
     }
 }
