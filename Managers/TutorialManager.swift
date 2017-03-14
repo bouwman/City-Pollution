@@ -23,7 +23,10 @@ class TutorialManager: NSObject {
     init(levelScene: LevelScene) {
         self.levelScene = levelScene
         super.init()
+        
         NotificationCenter.default.add(self, selector: #selector(TutorialManager.didReceiveSpawnCitizenNotification), notification: .spawnCitizen)
+        
+        currentStep = "Welcome to London- In 1952 the “great smog” resulted in 4,000 deaths in a matter of days.  Currently diesel vehicles and indoor pollution contribute to illegally high levels of no2.  Inhaling No2 is similar to breathing in tar. It inflames the lungs and increases the chances of strokes, heart attacks, asthma, and lung cancer. An estimated 40,000 people across the uk die prematurely from noz pollution each year."
     }
     
     func didReceiveSpawnCitizenNotification() {

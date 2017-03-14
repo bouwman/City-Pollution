@@ -24,6 +24,7 @@ class SoundManager {
         let node = SKAudioNode(fileNamed: "background.mp3")
         node.isPositional = false
         node.autoplayLooped = true
+        node.run(SKAction.changeVolume(to: 0.1, duration: 0.0))
         
         return node
     }()
@@ -41,6 +42,7 @@ class SoundManager {
                 stopMusic()
             }
             scene.addChild(levelMusicNode)
+            levelMusicNode.run(SKAction.play())
         case .world:
             fatalError("no music yet")
         }

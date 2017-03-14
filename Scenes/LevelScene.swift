@@ -50,7 +50,6 @@ class LevelScene: BaseScene {
         registerForPauseNotifications()
         
         SoundManager.sharedInstance.playMusic(music: .level, inScene: self)
-        
         tutorialManager = TutorialManager(levelScene: self)
         
         physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
@@ -91,7 +90,9 @@ class LevelScene: BaseScene {
         
         stateMachine.enter(LevelSceneTutorialState.self)
     }
-        
+    
+    var waitToPresentIntroTime: TimeInterval = 5.0
+    
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
         
@@ -125,6 +126,11 @@ class LevelScene: BaseScene {
         // update hud
         pollutionLabel.text = "Pollution: " + levelManager.cityPollutionAbs.format(".0")
         moneyLabel.text = "Support: " + levelManager.money.format(".0") + " $"
+        
+        if totalTimeInterval >= waitToPresentIntroTime && waitToPresentIntroTime > 0 {
+            waitToPresentIntroTime = -1
+            stateMachine.enter(LevelSceneInstructionsState.self)
+        }
     }
     
     func updateEnvironmentWithPollution(_ pollution: Double) {

@@ -20,9 +20,9 @@ class LevelSceneInstructionsState: LevelSceneOverlayState {
         let label = SKMultilineLabel(text: "", labelWidth: width, pos: CGPoint.zero)
         let background = self.textBackground
         
-        label.fontSize = 24
+        label.fontSize = 20
         label.alignment = .center
-        label.leading = 30
+        label.leading = 21
         label.position.y = background.size.height / 2.0
         
         background.addChild(label)

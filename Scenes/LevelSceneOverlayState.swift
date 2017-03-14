@@ -10,14 +10,13 @@ import GameplayKit
 
 class LevelSceneOverlayState: GKState {
 
-    unowned let levelScene: LevelScene
+    let levelScene: LevelScene
     
     /// The `SceneOverlay` to display when the state is entered.
     var overlay: SceneOverlay!
     
     /// Overridden by subclasses to provide the name of the .sks file to load to show as an overlay.
     var overlaySceneFileName: String { fatalError("Unimplemented overlaySceneName") }
-    
     
     init(levelScene: LevelScene) {
         self.levelScene = levelScene

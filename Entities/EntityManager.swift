@@ -12,7 +12,7 @@ import SpriteKit
 class EntityManager {
     
     var entities = Set<GKEntity>()
-    let scene: SKScene
+    unowned let scene: SKScene
     var toRemove = Set<GKEntity>()
         
     lazy var componentSystems: [GKComponentSystem] = {

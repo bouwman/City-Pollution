@@ -19,7 +19,7 @@ struct LevelConfiguration {
 }
 
 class LevelManager: CitizenEntityDelegate {
-    let scene: LevelScene
+    unowned let scene: LevelScene
     let configuration: LevelConfiguration
     
     var money: Double = 0
