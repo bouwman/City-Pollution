@@ -37,6 +37,6 @@ class CapacityComponent: GKComponent {
         guard let renderComponent = entity?.component(ofType: GKSKNodeComponent.self) else { return }
         guard let capacityLabel = renderComponent.node.childNode(withName: Const.Nodes.Houses.capacity) as? SKLabelNode else { return }
         
-        capacityLabel.text = curCapacity.format("0") + "/" + maxCapacity.format("0")
+        capacityLabel.text = "\(curCapacity)/\(maxCapacity)"
     }
 }

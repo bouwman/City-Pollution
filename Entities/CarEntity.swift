@@ -38,7 +38,7 @@ class CarEntity: GKEntity {
         
         fumes.name = Const.Nodes.contaminatorEmitter
         fumes.position.x = -node.size.width / 2 - 5
-        fumes.position.y = -node.size.height / 2 + 5
+        fumes.position.y = -node.size.height / 2 + 10
         node.addChild(fumes)
     }
     

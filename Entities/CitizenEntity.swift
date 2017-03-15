@@ -51,8 +51,6 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
         let sprite = CitizenNode(imageNamed: "citizen yellow")
         sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite.size.height / 2)
         sprite.zPosition = WorldLayer.characters.rawValue
-        sprite.xScale = 0.2
-        sprite.yScale = 0.2
         
         return sprite
     }()

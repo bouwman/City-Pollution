@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import AVFoundation
 
 enum Sound {
     case coin, overrun, click
@@ -20,14 +21,8 @@ class SoundManager {
     private let playCoin = SKAction.playSoundFileNamed("coins.caf", waitForCompletion: false)
     private let playOverrun = SKAction.playSoundFileNamed("overrun.caf", waitForCompletion: false)
     private let playClick = SKAction.playSoundFileNamed("click.caf", waitForCompletion: false)
-    private lazy var levelMusicNode: SKAudioNode = {
-        let node = SKAudioNode(fileNamed: "background.mp3")
-        node.isPositional = false
-        node.autoplayLooped = true
-        node.run(SKAction.changeVolume(to: 0.1, duration: 0.0))
-        
-        return node
-    }()
+    
+    private var backgroundMusicPlayer = AVAudioPlayer()
     
     weak var currentScene: SKScene?
     
@@ -38,19 +33,10 @@ class SoundManager {
     func playMusic(music: Music, inScene scene: SKScene) {
         switch music {
         case .level:
-            if levelMusicNode.parent != nil {
-                stopMusic()
-            }
-            scene.addChild(levelMusicNode)
-            levelMusicNode.run(SKAction.play())
+            playBackgroundMusic(filename: "background.mp3")
         case .world:
             fatalError("no music yet")
         }
-    }
-    
-    func stopMusic() {
-        levelMusicNode.run(SKAction.stop())
-        levelMusicNode.removeFromParent()
     }
     
     func playSound(_ sound: Sound, inScene scene: SKScene) {
@@ -68,5 +54,21 @@ class SoundManager {
     func playSound(_ sound: Sound) {
         guard let currentScene = self.currentScene else { return }
         playSound(sound, inScene: currentScene)
+    }
+    
+    private func playBackgroundMusic(filename: String) {
+        let url = Bundle.main.url(forResource: filename, withExtension: nil)
+        guard let newURL = url else {
+            print("Could not find file: \(filename)")
+            return
+        }
+        do {
+            backgroundMusicPlayer = try AVAudioPlayer(contentsOf: newURL)
+            backgroundMusicPlayer.numberOfLoops = -1
+            backgroundMusicPlayer.prepareToPlay()
+            backgroundMusicPlayer.play()
+        } catch let error as NSError {
+            print(error.description)
+        }
     }
 }

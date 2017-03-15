@@ -54,7 +54,7 @@ struct Const {
         static let healthBarDistance = CGFloat(6.0)
         static let healthBarHeight = CGFloat(5.0)
         static let healthBarColor = UIColor.green
-        static let greenRange = 0.8...1.0
+        static let greenRange = 0.8..<1.01
         static let yellowRange = 0.3..<0.8
         static let redRange = 0..<0.3
         static let earnRangeNormal = 0.5..<Citizens.greenRange.lowerBound

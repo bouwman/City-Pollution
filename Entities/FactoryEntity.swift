@@ -34,8 +34,8 @@ class FactoryEntity: GKEntity {
         
         let smoke = SKEmitterNode(fileNamed: "Smoke")!
         
-        smoke.position.y = node.size.height / 2
-        smoke.position.x = -node.size.width / 4
+        smoke.position.y = node.size.height / 2 + 5
+        smoke.position.x = -6
         smoke.name = Const.Nodes.contaminatorEmitter
         node.addChild(smoke)
     }

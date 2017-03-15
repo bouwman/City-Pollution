@@ -28,6 +28,17 @@ class HealthComponent: GKComponent {
     var delegate: HealthComponentDelegate?
     var healthBar: HealthBar?
     
+    private lazy var node: SKNode? = {
+        return self.entity?.component(ofType: GKSKNodeComponent.self)?.node
+    }()
+    
+    private lazy var regenerationZone: SKSpriteNode? = {
+        guard let node = self.entity?.component(ofType: GKSKNodeComponent.self)?.node else { return nil }
+        guard let zone = node.scene?.childNode(withName: Const.Nodes.Layers.board)?.childNode(withName: Const.Nodes.regenerationZone) else { return nil }
+        
+        return zone as? SKSpriteNode
+    }()
+    
     private(set) var curHealth: Double {
         didSet {
             if curHealth < 0 {
@@ -121,8 +132,8 @@ class HealthComponent: GKComponent {
     }
     
     private var isInRegenerationZone: Bool {
-        guard let node = entity?.component(ofType: GKSKNodeComponent.self)?.node else { return false }
-        guard let regenerationZone = node.scene?.childNode(withName: Const.Nodes.Layers.board)?.childNode(withName: Const.Nodes.regenerationZone) else { return false }
+        guard let node = node, let regenerationZone = regenerationZone else { return false }
+        guard node.position.y < regenerationZone.position.y + regenerationZone.size.height / 2 else { return false }
         
         return regenerationZone.contains(node.position)
     }

@@ -30,7 +30,7 @@ class DrawPathComponent: GKComponent {
         
         let parentNode: SKNode
         
-        if let scene = SKNode.findParentScene(node: renderComponent.node) {
+        if let scene = renderComponent.node.scene {
             parentNode = scene
         } else {
             // ???: Does is make sense to draw points here?

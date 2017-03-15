@@ -48,6 +48,9 @@ class SceneManager {
             presentingView.presentScene(scene, transition: transition)
             
             SoundManager.sharedInstance.currentScene = scene
+            
+            // TODO: Temporary solution
+            SoundManager.sharedInstance.playMusic(music: .level, inScene: scene)
         default:
             break
         }

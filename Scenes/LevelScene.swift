@@ -44,12 +44,15 @@ class LevelScene: BaseScene {
         return hud!.childNode(withName: "money") as! SKLabelNode
     }
     
+    private var pollutionBackground: SKSpriteNode!
+    
     override func didMove(to view: SKView) {
         super.didMove(to: view)
         
+        pollutionBackground = childNode(withName: Const.Nodes.Layers.board)!.childNode(withName: "background") as! SKSpriteNode
+        
         registerForPauseNotifications()
         
-        SoundManager.sharedInstance.playMusic(music: .level, inScene: self)
         tutorialManager = TutorialManager(levelScene: self)
         
         physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
@@ -73,7 +76,7 @@ class LevelScene: BaseScene {
             
             for child in layerNode.children {
                 if child.name == "factory" {
-                    let entity = FactoryEntity(levelManager: levelManager, node: child as! SKSpriteNode, pollutionInput: levelManager.configuration.pollutionIndustry / 2, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 500, factor: 0.7, spriteName: ""), Upgrade(money: 1000, factor: 0.5, spriteName: ""))
+                    let entity = FactoryEntity(levelManager: levelManager, node: child as! SKSpriteNode, pollutionInput: levelManager.configuration.pollutionIndustry / 2, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: "Factory-1"), Upgrade(money: 500, factor: 0.7, spriteName: "Factory-2"), Upgrade(money: 1000, factor: 0.5, spriteName: "Factory-3"))
                     entityManager.add(entity)
                 } else if let park = child as? ParkNode {
                     let entity = ParkEntity(levelManager: levelManager, node: park)
@@ -126,7 +129,9 @@ class LevelScene: BaseScene {
         // update hud
         pollutionLabel.text = "Pollution: " + levelManager.cityPollutionAbs.format(".0")
         moneyLabel.text = "Support: " + levelManager.money.format(".0") + " $"
+        updateEnvironmentWithPollution(levelManager.cityPollutionRel)
         
+        // Show initial instructions
         if totalTimeInterval >= waitToPresentIntroTime && waitToPresentIntroTime > 0 {
             waitToPresentIntroTime = -1
             stateMachine.enter(LevelSceneInstructionsState.self)
@@ -134,13 +139,7 @@ class LevelScene: BaseScene {
     }
     
     func updateEnvironmentWithPollution(_ pollution: Double) {
-        
-    }
-    
-    override func willMove(from view: SKView) {
-        super.willMove(from: view)
-        
-        SoundManager.sharedInstance.stopMusic()
+        pollutionBackground.alpha = CGFloat(pollution)
     }
     
     deinit {
@@ -148,9 +147,9 @@ class LevelScene: BaseScene {
     }
     
     private func addCar() {
-        let sprite = SKSpriteNode(color: UIColor.black, size: CGSize(width: 60, height: 30))
+        let sprite = SKSpriteNode(imageNamed: "old car")
         let points = [CGPoint(x: -self.size.width / 2 - sprite.size.width, y: 0), CGPoint(x: 0, y: 0), CGPoint(x: self.size.width / 2 + sprite.size.width, y: 0)]
-        let car = CarEntity(levelManager: levelManager, node: sprite, movePoints: points, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: ""), Upgrade(money: 500, factor: 0.7, spriteName: ""), Upgrade(money: 1000, factor: 0.5, spriteName: ""))
+        let car = CarEntity(levelManager: levelManager, node: sprite, movePoints: points, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: "old car"), Upgrade(money: 500, factor: 0.7, spriteName: "New car"), Upgrade(money: 1000, factor: 0.5, spriteName: "New car"))
         sprite.position = points.first!
         
         entityManager.add(car)

@@ -9,14 +9,24 @@
 import SpriteKit
 
 class CitizenNode: SKSpriteNode {
+    private var oldRange = Const.Citizens.yellowRange
     func updateSpriteWith(healthLevel: Double) {
         switch healthLevel {
         case Const.Citizens.redRange:
-            run(actionForTexture(image: #imageLiteral(resourceName: "citizen red")))
+            if oldRange != Const.Citizens.redRange {
+                oldRange = Const.Citizens.redRange
+                run(actionForTexture(image: #imageLiteral(resourceName: "citizen red")))
+            }
         case Const.Citizens.yellowRange:
-            run(actionForTexture(image: #imageLiteral(resourceName: "citizen yellow")))
+            if oldRange != Const.Citizens.yellowRange {
+                oldRange = Const.Citizens.yellowRange
+                run(actionForTexture(image: #imageLiteral(resourceName: "citizen yellow")))
+            }
         case Const.Citizens.greenRange:
-            run(actionForTexture(image: #imageLiteral(resourceName: "citizen green")))
+            if oldRange != Const.Citizens.greenRange {
+                oldRange = Const.Citizens.greenRange
+                run(actionForTexture(image: #imageLiteral(resourceName: "citizen green")))
+            }
         default:
             fatalError("health level out of bounce")
         }
