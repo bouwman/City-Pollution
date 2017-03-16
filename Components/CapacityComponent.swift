@@ -20,6 +20,14 @@ class CapacityComponent: GKComponent {
     var curCapacity: Int
     var maxCapacity: Int
     
+    private lazy var renderComponent: GKSKNodeComponent? = {
+        self.entity?.component(ofType: GKSKNodeComponent.self)
+    }()
+    
+    private lazy var capacityLabel: SKLabelNode? = {
+        self.renderComponent?.node.childNode(withName: Const.Nodes.Houses.capacity) as? SKLabelNode
+    }()
+    
     init(maxCapacity: Int) {
         self.maxCapacity = maxCapacity
         self.curCapacity = maxCapacity
@@ -34,9 +42,6 @@ class CapacityComponent: GKComponent {
     override func update(deltaTime seconds: TimeInterval) {
         super.update(deltaTime: seconds)
         
-        guard let renderComponent = entity?.component(ofType: GKSKNodeComponent.self) else { return }
-        guard let capacityLabel = renderComponent.node.childNode(withName: Const.Nodes.Houses.capacity) as? SKLabelNode else { return }
-        
-        capacityLabel.text = "\(curCapacity)/\(maxCapacity)"
+        capacityLabel?.text = "\(curCapacity)/\(maxCapacity)"
     }
 }

@@ -21,9 +21,11 @@ class LevelSceneInstructionsState: LevelSceneOverlayState {
         let background = self.textBackground
         
         label.fontSize = 20
-        label.alignment = .center
+        label.alignment = .left
         label.leading = 21
-        label.position.y = background.size.height / 2.0
+        label.fontColor = UIColor.black
+        label.position.y = background.size.height / 2.0 - 15
+        label.zPosition = 1000
         
         background.addChild(label)
         

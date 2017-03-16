@@ -30,7 +30,7 @@ struct Const {
         static let regenerationZone = "regeneration zone"
         static let house = "house"
         static let upgrade = "upgrade"
-        static let instructionsBackground = "instructions background"
+        static let instructionsBackground = "resume"
         static let contaminatorEmitter = "contaminator emitter"
         
         struct Houses {
@@ -50,7 +50,7 @@ struct Const {
         static let yDistanceAfterSpawn = CGFloat(0.0)
         static let startHealthPercent = 0.5
         static let healthIncreaseBase = 0.001
-        static let healthDecreaseBase = 0.0003
+        static let healthDecreaseBase = 0.0005
         static let healthBarDistance = CGFloat(6.0)
         static let healthBarHeight = CGFloat(5.0)
         static let healthBarColor = UIColor.green

@@ -61,6 +61,6 @@ class CarEntity: GKEntity {
     }
     
     private func createMovementComponentWith(movePoints: [CGPoint]) -> InfiniteMovementComponent {
-        return InfiniteMovementComponent(movePoints: movePoints, maxSpeed: 40, maxAcceleration: 40, maxPredictionTime: 1.0, radius: 0)
+        return InfiniteMovementComponent(movePoints: movePoints, maxSpeed: 50, maxAcceleration: 50, maxPredictionTime: 1.0, radius: 0)
     }
 }

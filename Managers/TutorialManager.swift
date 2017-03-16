@@ -46,14 +46,14 @@ class TutorialManager: NSObject {
         NotificationCenter.default.add(self, selector: #selector(TutorialManager.didReceiveTurnOnLightNotification), notification: .turnOnLight)
         NotificationCenter.default.add(self, selector: #selector(TutorialManager.didReceiveReachMaxHealthNotification), notification: .reachMaxHealth)
         
-        currentStep = "Wait for the citizen to regenerate."
+        currentStep = "Good job! Wait for the citizen to regenerate. Don't forget to take care of the other citizens."
         levelScene.stateMachine.enter(LevelSceneInstructionsState.self)
     }
     
     func didReceiveTurnOnLightNotification() {
         NotificationCenter.default.remove(self, forNotification: .turnOnLight)
         
-        currentStep = "Oh, someone left their light on. Turn it off to reduce the pollution."
+        currentStep = "Oh, someone left their light on. Turn it off to reduce the pollution. You see the current pollution level in the top left corner. The pollution level is also reflected by the color of the ground."
         levelScene.stateMachine.enter(LevelSceneInstructionsState.self)
     }
     
@@ -63,7 +63,7 @@ class TutorialManager: NSObject {
         // Listen for next step
         NotificationCenter.default.add(self, selector: #selector(TutorialManager.didReceiveArriveAtHouseNotification), notification: .arriveAtHouse)
         
-        currentStep = "Move back the citizen back to earn support."
+        currentStep = "Move back the citizen back to earn support. The numbers above the house reflect the capacity of the house. You can only move citizens into houses that have some capactity left."
         levelScene.stateMachine.enter(LevelSceneInstructionsState.self)
     }
     
@@ -72,7 +72,7 @@ class TutorialManager: NSObject {
         
         NotificationCenter.default.remove(self, forNotification: .arriveAtHouse)
         
-        currentStep = "Great! You earned some support. When you have earned enough support you can upgrade the factories and the car to reduce the pollution."
+        currentStep = "Great! You earned some support. When you have earned enough support you can upgrade the factories and the car to reduce the pollution even further. Good luck saving the city!"
         levelScene.stateMachine.enter(LevelSceneInstructionsState.self)
     }
     

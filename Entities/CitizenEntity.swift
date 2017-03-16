@@ -130,7 +130,7 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
     
     private func createMovementComponentWith(renderComponent: GKSKNodeComponent) -> MovementComponent {
         let radius = Float(renderComponent.node.frame.width * 1.0) * 0.0
-        return MovementComponent(maxSpeed: 30, maxAcceleration: 30, maxPredictionTime: 1.0, radius: radius, obstacles: obstaclesFor(entities: obstacles), wanderPoint: float2(renderComponent.node.position))
+        return MovementComponent(maxSpeed: 40, maxAcceleration: 40, maxPredictionTime: 1.0, radius: radius, obstacles: obstaclesFor(entities: obstacles), wanderPoint: float2(renderComponent.node.position))
     }
     
     // MARK: - DestinationComponentDelegate

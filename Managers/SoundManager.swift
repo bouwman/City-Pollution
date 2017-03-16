@@ -28,7 +28,8 @@ class SoundManager {
     
     static let sharedInstance = SoundManager()
     
-    private init() {}
+    private init() {
+    }
     
     func playMusic(music: Music, inScene scene: SKScene) {
         switch music {
@@ -65,6 +66,7 @@ class SoundManager {
         do {
             backgroundMusicPlayer = try AVAudioPlayer(contentsOf: newURL)
             backgroundMusicPlayer.numberOfLoops = -1
+            backgroundMusicPlayer.volume = 0.3
             backgroundMusicPlayer.prepareToPlay()
             backgroundMusicPlayer.play()
         } catch let error as NSError {
