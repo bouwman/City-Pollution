@@ -26,7 +26,7 @@ class LevelSceneTutorialState: GKState {
     
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {
         switch stateClass {
-        case is LevelScenePauseState.Type, is LevelSceneFailState.Type, is LevelSceneSuccessState.Type, is LevelSceneInstructionsState.Type, is LevelSceneActiveState.Type:
+        case is LevelScenePauseState.Type, is LevelSceneFailState.Type, is LevelSceneSuccessState.Type, is LevelSceneInstructionsState.Type, is LevelSceneActiveState.Type, is LevelSceneCitizenIntroState.Type:
             return true
             
         default:

@@ -8,7 +8,7 @@
 
 import GameplayKit
 
-enum CitizenType {
+enum CitizenType: String {
     case normal, child, old, asthma
     
     var decreaseFactor: Double {
@@ -29,8 +29,34 @@ enum CitizenType {
         return 1.0
     }
     
-    var sprite: String {
-        return ""
+    var initialSpriteName: String {
+        return self.spriteNameFor(health: 0.5)
+    }
+    
+    func spriteNameFor(health: Double) -> String {
+        switch health {
+        case Const.Citizens.redRange:
+            return Const.Citizens.Sprites.red + " " + self.rawValue
+        case Const.Citizens.yellowRange:
+            return Const.Citizens.Sprites.yellow + " " + self.rawValue
+        case Const.Citizens.greenRange:
+            return Const.Citizens.Sprites.green + " " + self.rawValue
+        default:
+            fatalError("health level out of bounce")
+        }
+    }
+    
+    var intro: String {
+        switch self {
+        case .normal:
+            return Const.Citizens.Intros.normal
+        case .child:
+            return Const.Citizens.Intros.child
+        case .old:
+            return Const.Citizens.Intros.old
+        case .asthma:
+            return Const.Citizens.Intros.asthma
+        }
     }
 }
 
@@ -42,13 +68,14 @@ protocol CitizenEntityDelegate {
 class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDelegate {
     var delegate: CitizenEntityDelegate?
     let levelManager: LevelManager
+    var type: CitizenType
     
     var renderComponent: GKSKNodeComponent {
         return component(ofType: GKSKNodeComponent.self)!
     }
     
     lazy var sprite: CitizenNode = {
-        let sprite = CitizenNode(imageNamed: "citizen yellow")
+        let sprite = CitizenNode(imageNamed: self.type.initialSpriteName)
         sprite.physicsBody = SKPhysicsBody(circleOfRadius: sprite.size.height / 2)
         sprite.zPosition = WorldLayer.characters.rawValue
         
@@ -57,6 +84,7 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
     
     init(type: CitizenType, levelManager: LevelManager, possibleDestinations: [GKEntity], obstacles: [GKEntity]) {
         self.levelManager = levelManager
+        self.type = type
         
         super.init()
         

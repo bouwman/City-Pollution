@@ -9,7 +9,7 @@
 import GameplayKit
 
 protocol HousesManagerDataSource {
-    func housesManager(_ housesManager: HousesManager, citizenForHouse house: HouseEntity) -> CitizenEntity
+    func housesManager(_ housesManager: HousesManager, citizenForHouse house: HouseEntity, type: CitizenType) -> CitizenEntity
 }
 
 protocol HousesManagerDelegate {
@@ -21,33 +21,69 @@ class HousesManager {
     var spawnInterval: TimeInterval
     var dataSource: HousesManagerDataSource!
     var delegate: HousesManagerDelegate!
+    var spawnCountLevelUp: Int
+    var lastSpawnedType: CitizenType
     
     private var lastSpawnTime: TimeInterval = 0
+    private var citizenSpawnCount = 0
+    private var currentLevel = 0
+    private var levelTypes: [CitizenType] = [.normal, .old]
     
-    init(houses: [HouseEntity], spawnInterval: TimeInterval) {
+    init(houses: [HouseEntity], spawnInterval: TimeInterval, spawnCountLevelUp: Int) {
         self.houses = houses
         self.spawnInterval = spawnInterval
+        self.spawnCountLevelUp = spawnCountLevelUp
+        self.lastSpawnedType = levelTypes.first!
     }
     
     func update(totalTime: TimeInterval) {
         let deltaTime = totalTime - lastSpawnTime
+        
         if deltaTime > spawnInterval {
             let freeHouses = houses.filter({ (house) -> Bool in
                 return house.capacityComponent.isNotEmpty
             })
             
             guard freeHouses.count > 0 else { return }
+            
+            var type = lastSpawnedType
+            if citizenSpawnCount >= spawnCountLevelUp {
+                citizenSpawnCount = 0
+                currentLevel += 1
+                type = nextType()
+                NotificationCenter.default.post(.spawnNewCitizenType)
+            }
 
+            // Pick random house
             let randomGen = GKRandomDistribution(lowestValue: 0, highestValue: freeHouses.count - 1)
             let houseToSpawnFrom = freeHouses[randomGen.nextInt()]
-            let newCitizen = dataSource.housesManager(self, citizenForHouse: houseToSpawnFrom)
+            let newCitizen = dataSource.housesManager(self, citizenForHouse: houseToSpawnFrom, type: type)
             
             houseToSpawnFrom.capacityComponent.curCapacity -= 1
             
+            citizenSpawnCount += 1
             lastSpawnTime = totalTime
             
             NotificationCenter.default.post(.spawnCitizen)
             delegate.housesManager(self, didSpawnCitizen: newCitizen)
         }
+    }
+    
+    // TODO: Enhance
+    private func nextType() -> CitizenType {
+        let type: CitizenType
+        if currentLevel > 0 {
+            let possibleType = levelTypes[1]
+            if possibleType == lastSpawnedType {
+                type = levelTypes[0]
+            } else {
+                type = possibleType
+            }
+        } else {
+            type = levelTypes.first!
+        }
+        lastSpawnedType = type
+        
+        return type
     }
 }

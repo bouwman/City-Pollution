@@ -60,11 +60,25 @@ struct Const {
         static let earnRangeNormal = 0.5..<Citizens.greenRange.lowerBound
         static let earnRangePerfect = Citizens.greenRange
         
+        struct Sprites {
+            static let yellow = "citizen yellow"
+            static let green = "citizen green"
+            static let red = "citizen red"
+        }
+        
         struct TypesFactors {
             static let normal = 1.0
             static let child =  1.3
-            static let old =    1.6
-            static let asthma = 1.9
+            static let old =    1.2
+            static let asthma = 1.4
+        }
+        
+        struct Intros {
+            // TODO: Fix!!
+            static let normal = "My wife passed away 5 years ago. After that I didn’t really leave the house.  Then one day I went to the park. That’s when I saw Lily. She was beautiful. I didn’t know what to say so I picked a flower and handed it to her.  She smiled. I’ve been meeting her with a flower in the park every day since."
+            static let child = "My favorite player is Messi.  When I grow up I want to be just like him.  I can’t wear his jersey to school so mom bought me yellow tape and put 10’s on my shirts instead. I used to play forward like he does. I was really fast. But now i’m not allowed to because the air makes my asthma bad."
+            static let old = "My wife passed away 5 years ago. After that I didn’t really leave the house.  Then one day I went to the park. That’s when I saw Lily. She was beautiful. I didn’t know what to say so I picked a flower and handed it to her.  She smiled. I’ve been meeting her with a flower in the park every day since."
+            static let asthma = "no intro yet"
         }
     }
     struct Fonts {
@@ -89,6 +103,7 @@ enum WorldLayer: CGFloat {
 
 enum NotificationType: String {
     case spawnCitizen
+    case spawnNewCitizenType
     case arriveAtPark
     case turnOnLight
     case reachMaxHealth

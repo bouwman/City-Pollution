@@ -10,30 +10,30 @@ import SpriteKit
 
 class CitizenNode: SKSpriteNode {
     private var oldRange = Const.Citizens.yellowRange
-    func updateSpriteWith(healthLevel: Double) {
+    func updateSpriteWith(healthLevel: Double, type: CitizenType) {
         switch healthLevel {
         case Const.Citizens.redRange:
             if oldRange != Const.Citizens.redRange {
                 oldRange = Const.Citizens.redRange
-                run(actionForTexture(image: #imageLiteral(resourceName: "citizen red")))
+                run(actionFor(citizenType: type, health: healthLevel))
             }
         case Const.Citizens.yellowRange:
             if oldRange != Const.Citizens.yellowRange {
                 oldRange = Const.Citizens.yellowRange
-                run(actionForTexture(image: #imageLiteral(resourceName: "citizen yellow")))
+                run(actionFor(citizenType: type, health: healthLevel))
             }
         case Const.Citizens.greenRange:
             if oldRange != Const.Citizens.greenRange {
                 oldRange = Const.Citizens.greenRange
-                run(actionForTexture(image: #imageLiteral(resourceName: "citizen green")))
+                run(actionFor(citizenType: type, health: healthLevel))
             }
         default:
             fatalError("health level out of bounce")
         }
     }
     
-    private func actionForTexture(image: UIImage) -> SKAction {
-        return SKAction.setTexture(SKTexture(image: image))
+    private func actionFor(citizenType: CitizenType, health: Double) -> SKAction {
+        return SKAction.setTexture(SKTexture(imageNamed: citizenType.spriteNameFor(health: health)))
     }
 }
 
@@ -45,6 +45,7 @@ class WallNode: SKSpriteNode {
 
 class DoorNode: SKSpriteNode {
 }
+
 class ParkNode: SKSpriteNode {
 }
 

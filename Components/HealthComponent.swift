@@ -90,19 +90,18 @@ class HealthComponent: GKComponent {
         case 0:
             delegate?.healthComponentens(entity: entity!, didReachHealthLevel: .dead)
         case maxHealth:
-            isRegenerating = false
+            // isRegenerating = false
             NotificationCenter.default.post(.reachMaxHealth)
             delegate?.healthComponentens(entity: entity!, didReachHealthLevel: .best)
         default:
             break
         }
         
-        if let renderComponent = entity?.component(ofType: GKSKNodeComponent.self) {
-            if let sprite = renderComponent.node as? CitizenNode {
-                let percent = curHealth / maxHealth
-                sprite.updateSpriteWith(healthLevel: percent)
-                updateHealthBarWith(healthLevel: percent, forNode: sprite)
-            }
+        if let citizen = entity as? CitizenEntity, let sprite = citizen.renderComponent.node as? CitizenNode {
+            let percent = curHealth / maxHealth
+            
+            sprite.updateSpriteWith(healthLevel: percent, type: citizen.type)
+            updateHealthBarWith(healthLevel: percent, forNode: sprite)
         }
     }
     

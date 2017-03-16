@@ -31,6 +31,7 @@ class LevelScene: BaseScene {
         LevelSceneActiveState(levelScene: self),
         LevelScenePauseState(levelScene: self),
         LevelSceneInstructionsState(levelScene: self),
+        LevelSceneCitizenIntroState(levelScene: self),
         LevelSceneSuccessState(levelScene: self),
         LevelSceneFailState(levelScene: self)
         ])
@@ -51,6 +52,7 @@ class LevelScene: BaseScene {
         
         pollutionBackground = childNode(withName: Const.Nodes.Layers.board)!.childNode(withName: "background") as! SKSpriteNode
         
+        NotificationCenter.default.add(self, selector: #selector(LevelScene.didReceiveSpawnNewCitizenTypeNotification), notification: .spawnNewCitizenType)
         registerForPauseNotifications()
         
         tutorialManager = TutorialManager(levelScene: self)
@@ -85,7 +87,7 @@ class LevelScene: BaseScene {
             }
         }
         
-        citizenSpawner = HousesManager(houses: houses, spawnInterval: levelManager.configuration.citizenSpawnInterval)
+        citizenSpawner = HousesManager(houses: houses, spawnInterval: levelManager.configuration.citizenSpawnInterval, spawnCountLevelUp: 15)
         citizenSpawner.dataSource = self
         citizenSpawner.delegate = self
         
@@ -113,7 +115,7 @@ class LevelScene: BaseScene {
         lastUpdateTimeInterval = currentTime
         
         // Initial call
-        guard deltaTime < 16000.0 else { return }
+        guard deltaTime < 1000.0 else { return }
         
         totalTimeInterval += deltaTime
         
@@ -144,6 +146,7 @@ class LevelScene: BaseScene {
     
     deinit {
         unregisterForPauseNotifications()
+        NotificationCenter.default.remove(self, forNotification: .spawnNewCitizenType)
     }
     
     private func addCar() {
@@ -245,6 +248,10 @@ extension LevelScene {
     func unregisterForPauseNotifications() {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIApplicationWillResignActive, object: nil)
     }
+    
+    func didReceiveSpawnNewCitizenTypeNotification() {
+        stateMachine.enter(LevelSceneCitizenIntroState.self)
+    }
 }
 
 // MARK: - SKPhysicsContactDelegate
@@ -272,9 +279,9 @@ extension LevelScene: SKPhysicsContactDelegate {
 // MARK: - HousesManagerDataSource
 
 extension LevelScene: HousesManagerDataSource {
-    func housesManager(_ housesManager: HousesManager, citizenForHouse house: HouseEntity) -> CitizenEntity {
+    func housesManager(_ housesManager: HousesManager, citizenForHouse house: HouseEntity, type: CitizenType) -> CitizenEntity {
         let houseSprite = house.renderComponent.node as! HouseNode
-        let citizen = CitizenEntity(type: .normal, levelManager: levelManager, possibleDestinations: houses, obstacles: obstacles)
+        let citizen = CitizenEntity(type: type, levelManager: levelManager, possibleDestinations: houses, obstacles: obstacles)
         
         citizen.renderComponent.node.position = houseSprite.entryAreaPosition
         citizen.delegate = levelManager
