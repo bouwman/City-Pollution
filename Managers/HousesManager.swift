@@ -28,6 +28,7 @@ class HousesManager {
     private var citizenSpawnCount = 0
     private var currentLevel = 0
     private var levelTypes: [CitizenType] = [.normal, .old]
+    private var waitToSpawnFirstCitizen = 3.0
     
     init(houses: [HouseEntity], spawnInterval: TimeInterval, spawnCountLevelUp: Int) {
         self.houses = houses
@@ -38,35 +39,37 @@ class HousesManager {
     
     func update(totalTime: TimeInterval) {
         let deltaTime = totalTime - lastSpawnTime
+        let isAboveFirstSpawnTime = waitToSpawnFirstCitizen > 0 && deltaTime > waitToSpawnFirstCitizen
+        let isAboveSpawnInterval = deltaTime > spawnInterval
         
-        if deltaTime > spawnInterval {
-            let freeHouses = houses.filter({ (house) -> Bool in
-                return house.capacityComponent.isNotEmpty
-            })
-            
-            guard freeHouses.count > 0 else { return }
-            
-            var type = lastSpawnedType
-            if citizenSpawnCount >= spawnCountLevelUp {
-                citizenSpawnCount = 0
-                currentLevel += 1
-                type = nextType()
-                NotificationCenter.default.post(.spawnNewCitizenType)
-            }
-
-            // Pick random house
-            let randomGen = GKRandomDistribution(lowestValue: 0, highestValue: freeHouses.count - 1)
-            let houseToSpawnFrom = freeHouses[randomGen.nextInt()]
-            let newCitizen = dataSource.housesManager(self, citizenForHouse: houseToSpawnFrom, type: type)
-            
-            houseToSpawnFrom.capacityComponent.curCapacity -= 1
-            
-            citizenSpawnCount += 1
-            lastSpawnTime = totalTime
-            
-            NotificationCenter.default.post(.spawnCitizen)
-            delegate.housesManager(self, didSpawnCitizen: newCitizen)
+        guard isAboveSpawnInterval || isAboveFirstSpawnTime else { return }
+        let freeHouses = houses.filter({ (house) -> Bool in
+            return house.capacityComponent.isNotEmpty
+        })
+        
+        guard freeHouses.count > 0 else { return }
+        
+        var type = lastSpawnedType
+        if citizenSpawnCount >= spawnCountLevelUp {
+            citizenSpawnCount = 0
+            currentLevel += 1
+            type = nextType()
+            NotificationCenter.default.post(.spawnNewCitizenType)
         }
+        
+        // Pick random house
+        let randomGen = GKRandomDistribution(lowestValue: 0, highestValue: freeHouses.count - 1)
+        let houseToSpawnFrom = freeHouses[randomGen.nextInt()]
+        let newCitizen = dataSource.housesManager(self, citizenForHouse: houseToSpawnFrom, type: type)
+        
+        houseToSpawnFrom.capacityComponent.curCapacity -= 1
+        
+        citizenSpawnCount += 1
+        lastSpawnTime = totalTime
+        waitToSpawnFirstCitizen = -1
+        
+        NotificationCenter.default.post(.spawnCitizen)
+        delegate.housesManager(self, didSpawnCitizen: newCitizen)
     }
     
     // TODO: Enhance

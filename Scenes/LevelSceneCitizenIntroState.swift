@@ -11,23 +11,14 @@ import GameplayKit
 class LevelSceneCitizenIntroState: LevelSceneOverlayState {
     // MARK: Properties
     
-    private var textBackground: SKSpriteNode {
-        return self.overlay.contentNode.childNode(withName: Const.Nodes.instructionsBackground)! as! SKSpriteNode
-    }
-    
     private lazy var textNode: SKMultilineLabel = {
-        let width = Int(self.textBackground.size.width / 2 + 30)
-        let label = SKMultilineLabel(text: "", labelWidth: width, pos: CGPoint.zero)
-        let background = self.textBackground
+        let size = self.overlay.nativeContentSize
+        let label = SKMultilineLabel.defaultStyle(backgroundSize: size)
         
-        label.fontSize = 20
-        label.alignment = .left
-        label.leading = 21
-        label.fontColor = UIColor.black
-        label.position.y = background.size.height / 2.0 - 15
-        label.zPosition = 1000
+        label.labelWidth = Int(size.width - 220)
+        label.position.y = size.height / 2 - 90
         
-        background.addChild(label)
+        self.overlay.contentNode.addChild(label)
         
         return label
     }()

@@ -11,6 +11,7 @@ import Foundation
 class TutorialManager: NSObject {
     var levelScene: LevelScene
     var currentStep: String?
+    var currentStepImageName: String?
     
     var isActive = true {
         didSet {
@@ -26,10 +27,13 @@ class TutorialManager: NSObject {
         
         NotificationCenter.default.add(self, selector: #selector(TutorialManager.didReceiveSpawnCitizenNotification), notification: .spawnCitizen)
         
-        currentStep = "Welcome to London- In 1952 the “great smog” resulted in 4,000 deaths in a matter of days.  Currently diesel vehicles and indoor pollution contribute to illegally high levels of no2.  Inhaling No2 is similar to breathing in tar. It inflames the lungs and increases the chances of strokes, heart attacks, asthma, and lung cancer. An estimated 40,000 people across the uk die prematurely from noz pollution each year."
+        currentStep = "Welcome to London!\n\nIn 1952 the “great smog” resulted in 4,000 deaths in a matter of days.  Currently diesel vehicles and indoor pollution contribute to illegally high levels of no2. \nInhaling No2 is similar to breathing in tar. It inflames the lungs and increases the chances of strokes, heart attacks, asthma, and lung cancer. An estimated 40,000 people across the uk die prematurely from noz pollution each year."
+        currentStepImageName = "london intro background"
     }
     
     func didReceiveSpawnCitizenNotification() {
+        currentStepImageName = nil
+        
         NotificationCenter.default.remove(self, forNotification: .spawnCitizen)
         
         // Listen for next step

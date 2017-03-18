@@ -12,16 +12,32 @@ class WorldScene: BaseScene {
     
     var pan: UIPanGestureRecognizer!
     var pinch: UIPinchGestureRecognizer!
-
+    
+    lazy var mapNode: SKSpriteNode = self.childNode(withName: "map") as! SKSpriteNode
+    
+    lazy var textNode: SKMultilineLabel = SKMultilineLabel.defaultStyle(backgroundSize: self.size)
+    
     override func didMove(to view: SKView) {
         super.didMove(to: view)
         
+        // make one city blink
+        let cityNode = mapNode.childNode(withName: "city") as! SKSpriteNode
+        let fadeIn = SKAction.colorize(with: UIColor.white, colorBlendFactor: 1.0, duration: 1.5)
+        let fadeOut = SKAction.colorize(with: UIColor.lightGray, colorBlendFactor: 1.0, duration: 1.5)
+        
+        cityNode.run(SKAction.repeatForever(SKAction.sequence([fadeIn, fadeOut])))
+        
+        // add gestuers
         pan = UIPanGestureRecognizer(target: self, action: #selector(WorldScene.handlePan(_:)))
-        pinch = UIPinchGestureRecognizer(target: self, action: #selector(WorldScene.handlePinch(_:)))
+//        pinch = UIPinchGestureRecognizer(target: self, action: #selector(WorldScene.handlePinch(_:)))
         
         view.addGestureRecognizer(pan)
         
+        // create camera for gestures
         createCamera()
+        
+        // Show intro
+        presentIntro()
     }
     
     override func willMove(from view: SKView) {
@@ -30,12 +46,25 @@ class WorldScene: BaseScene {
         view.removeGestureRecognizer(pan)
     }
     
+    func presentIntro() {
+        let textScene = SKScene(fileNamed: "TextScene")!
+        
+        overlay = SceneOverlay(scene: textScene, zPosition: WorldLayer.aboveCharacters.rawValue)
+        overlay?.contentNode.addChild(textNode)
+        
+        textNode.text = Const.Intros.global
+    }
+    
     // MARK: ButtonNodeResponderType
     
     override func buttonTriggered(button: ButtonNode) {
         switch button.buttonIdentifier! {
         case .city:
             sceneManager.present(scene: .level(1))
+            SoundManager.sharedInstance.playSound(.click, inScene: self)
+        case .resume:
+            overlay = nil
+            SoundManager.sharedInstance.playSound(.click, inScene: self)
         default:
             super.buttonTriggered(button: button)
         }
@@ -70,3 +99,4 @@ class WorldScene: BaseScene {
         }
     }
 }
+

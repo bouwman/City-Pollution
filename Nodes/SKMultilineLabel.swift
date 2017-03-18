@@ -78,51 +78,71 @@ class SKMultilineLabel: SKNode {
     // swiftlint:disable cyclomatic_complexity
     func update() {
         guard !dontUpdate else { return }
-        
-        clearLabels()
+        if (labels.count > 0) {
+            for label in labels {
+                label.removeFromParent()
+            }
+            labels = []
+        }
         let separators = NSCharacterSet.whitespacesAndNewlines
-        let words = (text as NSString).components(separatedBy: separators)
-        var finalLine = false
-        var wordCount = -1
+        let lineSeparators = NSCharacterSet.newlines
+        let paragraphs = (text as NSString).components(separatedBy: lineSeparators)
+        
         var lineCount = 0
-        while !finalLine {
-            lineCount += 1
-            var lineLength = CGFloat(0)
-            var lineString = ""
-            var lineStringBeforeAddingWord = ""
-            
-            let label = createLabel(lineCount)
-            
-            while lineLength < CGFloat(labelWidth) {
-                wordCount += 1
-                if wordCount > words.count - 1 {
-                    finalLine = true
-                    break
-                } else {
-                    lineStringBeforeAddingWord = lineString
-                    lineString = "\(lineString) \(words[wordCount])"
+        for (_, paragraph) in paragraphs.enumerated() {
+            let words = (paragraph as NSString).components(separatedBy: separators)
+            var finalLine = false
+            var wordCount = -1
+            while (!finalLine) {
+                lineCount += 1
+                var lineLength = CGFloat(0)
+                var lineString = ""
+                var lineStringBeforeAddingWord = ""
+                
+                // creation of the SKLabelNode itself
+                let label = SKLabelNode(fontNamed: fontName)
+                // name each label node so you can animate it if u wish
+                label.name = "line\(lineCount)"
+                label.horizontalAlignmentMode = alignment
+                label.fontSize = fontSize
+                label.fontColor = SKColor.white
+                
+                while lineLength < CGFloat(labelWidth)
+                {
+                    wordCount += 1
+                    if wordCount > words.count-1
+                    {
+                        //label.text = "\(lineString) \(words[wordCount])"
+                        finalLine = true
+                        break
+                    }
+                    else
+                    {
+                        lineStringBeforeAddingWord = lineString
+                        lineString = "\(lineString) \(words[wordCount])"
+                        label.text = lineString
+                        lineLength = label.frame.size.width
+                    }
+                }
+                if lineLength > 0 {
+                    wordCount -= 1
+                    if (!finalLine) {
+                        lineString = lineStringBeforeAddingWord
+                    }
                     label.text = lineString
-                    lineLength = label.frame.width
+                    var linePos = pos
+                    if (alignment == .left) {
+                        linePos.x -= CGFloat(labelWidth / 2)
+                    } else if (alignment == .right) {
+                        linePos.x += CGFloat(labelWidth / 2)
+                    }
+                    linePos.y += CGFloat(-leading * lineCount)
+                    label.position = CGPoint(x: linePos.x, y: linePos.y )
+                    self.addChild(label)
+                    labels.append(label)
+                    //println("was \(lineLength), now \(label.width)")
                 }
             }
-            if lineLength > 0 {
-                wordCount -= 1
-                if !finalLine {
-                    lineString = lineStringBeforeAddingWord
-                }
-                label.text = lineString
-                var linePos = pos
-                if alignment == .left {
-                    linePos.x -= CGFloat(labelWidth / 2)
-                } else if alignment == .right {
-                    linePos.x += CGFloat(labelWidth / 2)
-                }
-                linePos.y += CGFloat(-leading * lineCount)
-                label.position = CGPoint(x:linePos.x, y:linePos.y )
-                addChild(label)
-                labels.append(label)
-            }
-            
         }
         labelHeight = lineCount * leading
         showBorder()

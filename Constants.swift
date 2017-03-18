@@ -32,6 +32,7 @@ struct Const {
         static let upgrade = "upgrade"
         static let instructionsBackground = "resume"
         static let contaminatorEmitter = "contaminator emitter"
+        static let cityIntroImage = "city intro image"
         
         struct Houses {
             static let capacity = "capacity"
@@ -82,8 +83,8 @@ struct Const {
         }
     }
     struct Fonts {
-        static let medium = "Helvetica Neue Medium"
-        static let bold = "Helvetica Neue Bold"
+        static let medium = "Futura Medium"
+        static let bold = "Futura Bold"
         struct Size {
             static let small: CGFloat = 12.0
             static let medium: CGFloat = 18.0
@@ -94,6 +95,9 @@ struct Const {
         static let arriveAtPark = "arrive at park"
         static let reachMaxHealth = "reach max health"
         static let arriveAtHouse = "arrive at house"
+    }
+    struct Intros {
+        static let global = "If the population of Hong Kong perished in a year, it would be headline news.\nExposure to air pollution claims as many lives, 1 in 8 of total global deaths, but in a silent, stealthy way leaving few fingerprints and fewer headlines.\n\n\nClick on a polluted city to clean up the air and save its citizens"
     }
 }
 
@@ -121,5 +125,19 @@ extension NotificationCenter {
     
     func remove(_ observer: Any, forNotification notification: NotificationType) {
         self.removeObserver(observer, name: Notification.Name(rawValue: notification.rawValue), object: nil)
+    }
+}
+
+extension SKMultilineLabel {
+    static func defaultStyle(backgroundSize: CGSize) -> SKMultilineLabel {
+        let margin: CGFloat = 120
+        let width = Int(backgroundSize.width - margin)
+        let label = SKMultilineLabel(text: "default text", labelWidth: width, pos: CGPoint.zero, fontName: "Futura", fontSize: 20, fontColor: UIColor.white, leading: 24, alignment: .left, shouldShowBorder: false)
+        
+        label.zPosition = WorldLayer.top.rawValue
+        label.position.y = backgroundSize.height / 2 - margin / 2
+        label.isUserInteractionEnabled = false
+        
+        return label
     }
 }

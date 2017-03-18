@@ -96,7 +96,7 @@ class LevelScene: BaseScene {
         stateMachine.enter(LevelSceneTutorialState.self)
     }
     
-    var waitToPresentIntroTime: TimeInterval = 5.0
+    var waitToPresentIntroTime: TimeInterval = 0.5
     
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
@@ -152,7 +152,7 @@ class LevelScene: BaseScene {
     private func addCar() {
         let sprite = SKSpriteNode(imageNamed: "old car")
         let points = [CGPoint(x: -self.size.width / 2 - sprite.size.width, y: 0), CGPoint(x: 0, y: 0), CGPoint(x: self.size.width / 2 + sprite.size.width, y: 0)]
-        let car = CarEntity(levelManager: levelManager, node: sprite, movePoints: points, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: "old car"), Upgrade(money: 500, factor: 0.7, spriteName: "New car"), Upgrade(money: 1000, factor: 0.5, spriteName: "New car"))
+        let car = CarEntity(levelManager: levelManager, node: sprite, movePoints: points, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: "old car"), Upgrade(money: 500, factor: 0.7, spriteName: "New car"), Upgrade(money: 1000, factor: 0.5, spriteName: "bus"))
         sprite.position = points.first!
         
         entityManager.add(car)
@@ -251,6 +251,7 @@ extension LevelScene {
     
     func didReceiveSpawnNewCitizenTypeNotification() {
         stateMachine.enter(LevelSceneCitizenIntroState.self)
+        NotificationCenter.default.remove(self, forNotification: .spawnNewCitizenType)
     }
 }
 

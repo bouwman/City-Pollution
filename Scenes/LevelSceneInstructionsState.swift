@@ -11,29 +11,16 @@ import GameplayKit
 class LevelSceneInstructionsState: LevelSceneOverlayState {
     // MARK: Properties
     
-    private var textBackground: SKSpriteNode {
-        return self.overlay.contentNode.childNode(withName: Const.Nodes.instructionsBackground)! as! SKSpriteNode
-    }
-    
     private lazy var textNode: SKMultilineLabel = {
-        let width = Int(self.textBackground.size.width - 20.0)
-        let label = SKMultilineLabel(text: "", labelWidth: width, pos: CGPoint.zero)
-        let background = self.textBackground
+        let label = SKMultilineLabel.defaultStyle(backgroundSize: self.overlay.nativeContentSize)
         
-        label.fontSize = 20
-        label.alignment = .left
-        label.leading = 21
-        label.fontColor = UIColor.black
-        label.position.y = background.size.height / 2.0 - 15
-        label.zPosition = 1000
-        
-        background.addChild(label)
+        self.overlay.contentNode.addChild(label)
         
         return label
     }()
     
     override var overlaySceneFileName: String {
-        return "InstructionsScene"
+        return "TextScene"
     }
     
     // MARK: GKState Life Cycle
@@ -43,6 +30,12 @@ class LevelSceneInstructionsState: LevelSceneOverlayState {
         
         if let currentStepText = levelScene.tutorialManager.currentStep {
             textNode.text = currentStepText
+            
+            if let currentStepImageName = levelScene.tutorialManager.currentStepImageName {
+                addBackgroundImage(named: currentStepImageName)
+            } else {
+                overlay.contentNode.childNode(withName: Const.Nodes.cityIntroImage)?.removeFromParent()
+            }
         } else {
             textNode.text = "no instructions"
         }
@@ -62,5 +55,13 @@ class LevelSceneInstructionsState: LevelSceneOverlayState {
         super.willExit(to: nextState)
         
         levelScene.pause(false)
+    }
+    
+    private func addBackgroundImage(named: String) {
+        let imageNode = SKSpriteNode(imageNamed: named)
+        imageNode.name = Const.Nodes.cityIntroImage
+        imageNode.zPosition = WorldLayer.aboveCharacters.rawValue
+        
+        overlay.contentNode.addChild(imageNode)
     }
 }
