@@ -16,6 +16,7 @@ struct LevelConfiguration {
     var citizenSpawnInterval: TimeInterval
     var pollutionWinLevel: Double
     var supportLoseLevel: Double
+    var spawnCountLevelUp: Int
 }
 
 class LevelManager: CitizenEntityDelegate {

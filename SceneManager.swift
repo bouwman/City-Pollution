@@ -21,7 +21,7 @@ class SceneManager {
         self.presentingView = presentingView
     }
     
-    lazy var firstLevelConfig = LevelConfiguration(pollutionIndustry: 500, pollutionLight: 480, pollutionTransport: 500, citizenCount: 12, citizenSpawnInterval: 10, pollutionWinLevel: 0.35, supportLoseLevel: -1500)
+    lazy var firstLevelConfig = LevelConfiguration(pollutionIndustry: 500, pollutionLight: 480, pollutionTransport: 500, citizenCount: 12, citizenSpawnInterval: 10, pollutionWinLevel: 0.35, supportLoseLevel: -1500, spawnCountLevelUp: 15)
     
     func present(scene identifier: SceneIdentifier) {
         switch identifier {

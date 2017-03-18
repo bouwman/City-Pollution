@@ -63,9 +63,10 @@ class LevelScene: BaseScene {
         
         physicsWorld.contactDelegate = self
         
+        let config = levelManager.configuration
         let houseCount = children.filter({$0.name == Const.Nodes.house}).count
-        let citizensPerHouse = levelManager.configuration.citizenCount / houseCount
-        let pollutionPerHouse = levelManager.configuration.pollutionLight / Double(houseCount)
+        let citizensPerHouse = config.citizenCount / houseCount
+        let pollutionPerHouse = config.pollutionLight / Double(houseCount)
         
         for layerNode in children {
             if let house = layerNode as? HouseNode {
@@ -87,7 +88,7 @@ class LevelScene: BaseScene {
             }
         }
         
-        citizenSpawner = HousesManager(houses: houses, spawnInterval: levelManager.configuration.citizenSpawnInterval, spawnCountLevelUp: 15)
+        citizenSpawner = HousesManager(houses: houses, spawnInterval: config.citizenSpawnInterval, spawnCountLevelUp: config.spawnCountLevelUp)
         citizenSpawner.dataSource = self
         citizenSpawner.delegate = self
         

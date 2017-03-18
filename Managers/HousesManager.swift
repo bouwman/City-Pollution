@@ -77,7 +77,7 @@ class HousesManager {
         let type: CitizenType
         if currentLevel > 0 {
             let possibleType = levelTypes[1]
-            if possibleType == lastSpawnedType {
+            if possibleType.rawValue == lastSpawnedType.rawValue {
                 type = levelTypes[0]
             } else {
                 type = possibleType
