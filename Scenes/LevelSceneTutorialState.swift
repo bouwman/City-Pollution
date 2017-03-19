@@ -22,6 +22,15 @@ class LevelSceneTutorialState: GKState {
     
     override func update(deltaTime seconds: TimeInterval) {
         super.update(deltaTime: seconds)
+        
+        let config = levelScene.levelManager.configuration
+        let deadCitizenCount = config.citizenCount - levelScene.levelManager.citizenCount
+        
+        if deadCitizenCount >= config.citizenCountLoseLevel || levelScene.levelManager.citizenCount == 0 {
+            levelScene.stateMachine.enter(LevelSceneFailState.self)
+        } else if levelScene.levelManager.cityPollutionRel < config.pollutionWinLevel {
+            levelScene.stateMachine.enter(LevelSceneSuccessState.self)
+        }
     }
     
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {

@@ -49,6 +49,9 @@ class DoorNode: SKSpriteNode {
 class ParkNode: SKSpriteNode {
 }
 
+class CarNode: SKSpriteNode {
+}
+
 class HouseNode: SKSpriteNode {
     var entryArea: SKSpriteNode {
         return childNode(withName: Const.Nodes.destination) as! SKSpriteNode
@@ -99,5 +102,26 @@ class WindowNode: SKSpriteNode {
                 color = UIColor.darkGray
             }
         }
+    }
+}
+
+class PollutionNode: SKSpriteNode {
+    func updateWith(pollution: Double) {
+        let number: Int
+        switch pollution {
+        case 0.8375...1.0:
+            number = 5
+        case 0.675...0.8375:
+            number = 4
+        case 0.5125...0.675:
+            number = 3
+        case 0.35...0.5125:
+            number = 2
+        case 0...0.35:
+            number = 1
+        default:
+            number = 5
+        }
+        texture = SKTexture(imageNamed: "Pollution bar \(number)")
     }
 }

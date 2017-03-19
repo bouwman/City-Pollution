@@ -19,6 +19,17 @@ class LevelSceneInstructionsState: LevelSceneOverlayState {
         return label
     }()
     
+    private lazy var imageNode: SKSpriteNode = {
+        let imageNode = SKSpriteNode(color: UIColor.red, size: CGSize(width: 50, height: 50))
+        imageNode.name = Const.Nodes.cityIntroImage
+        imageNode.zPosition = WorldLayer.aboveCharacters.rawValue
+        imageNode.isHidden = true
+        
+        self.overlay.contentNode.addChild(imageNode)
+        
+        return imageNode
+    }()
+    
     override var overlaySceneFileName: String {
         return "TextScene"
     }
@@ -32,9 +43,12 @@ class LevelSceneInstructionsState: LevelSceneOverlayState {
             textNode.text = currentStepText
             
             if let currentStepImageName = levelScene.tutorialManager.currentStepImageName {
-                addBackgroundImage(named: currentStepImageName)
+                let texture = SKTexture(imageNamed: currentStepImageName)
+                imageNode.isHidden = false
+                imageNode.texture = texture
+                imageNode.size = texture.size()
             } else {
-                overlay.contentNode.childNode(withName: Const.Nodes.cityIntroImage)?.removeFromParent()
+                imageNode.isHidden = true
             }
         } else {
             textNode.text = "no instructions"
@@ -55,13 +69,5 @@ class LevelSceneInstructionsState: LevelSceneOverlayState {
         super.willExit(to: nextState)
         
         levelScene.pause(false)
-    }
-    
-    private func addBackgroundImage(named: String) {
-        let imageNode = SKSpriteNode(imageNamed: named)
-        imageNode.name = Const.Nodes.cityIntroImage
-        imageNode.zPosition = WorldLayer.aboveCharacters.rawValue
-        
-        overlay.contentNode.addChild(imageNode)
     }
 }

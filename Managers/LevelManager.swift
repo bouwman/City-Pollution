@@ -15,7 +15,7 @@ struct LevelConfiguration {
     var citizenCount: Int
     var citizenSpawnInterval: TimeInterval
     var pollutionWinLevel: Double
-    var supportLoseLevel: Double
+    var citizenCountLoseLevel: Int
     var spawnCountLevelUp: Int
 }
 

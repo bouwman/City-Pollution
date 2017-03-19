@@ -36,9 +36,9 @@ class LevelScene: BaseScene {
         LevelSceneFailState(levelScene: self)
         ])
     
-    var pollutionLabel: SKLabelNode {
+    var pollutionNode: PollutionNode {
         let hud = self.childNode(withName: "hud")
-        return hud!.childNode(withName: "pollution") as! SKLabelNode
+        return hud!.childNode(withName: "pollution") as! PollutionNode
     }
     var moneyLabel: SKLabelNode {
         let hud = self.childNode(withName: "hud")
@@ -97,7 +97,7 @@ class LevelScene: BaseScene {
         stateMachine.enter(LevelSceneTutorialState.self)
     }
     
-    var waitToPresentIntroTime: TimeInterval = 0.5
+    var waitToPresentIntroTime: TimeInterval = 0.01
     
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
@@ -120,8 +120,6 @@ class LevelScene: BaseScene {
         
         totalTimeInterval += deltaTime
         
-        stateMachine.update(deltaTime: deltaTime)
-        
         // spawn citizens
         citizenSpawner.update(totalTime: totalTimeInterval)
         
@@ -129,8 +127,10 @@ class LevelScene: BaseScene {
         levelManager.cityPollutionAbs = 0
         entityManager.update(deltaTime)
         
+        stateMachine.update(deltaTime: deltaTime)
+        
         // update hud
-        pollutionLabel.text = "Pollution: " + levelManager.cityPollutionAbs.format(".0")
+        pollutionNode.updateWith(pollution: levelManager.cityPollutionRel)
         moneyLabel.text = "Support: " + levelManager.money.format(".0") + " $"
         updateEnvironmentWithPollution(levelManager.cityPollutionRel)
         
@@ -151,8 +151,8 @@ class LevelScene: BaseScene {
     }
     
     private func addCar() {
-        let sprite = SKSpriteNode(imageNamed: "old car")
-        let points = [CGPoint(x: -self.size.width / 2 - sprite.size.width, y: 0), CGPoint(x: 0, y: 0), CGPoint(x: self.size.width / 2 + sprite.size.width, y: 0)]
+        let sprite = CarNode(imageNamed: "old car")
+        let points = [CGPoint(x: -self.size.width / 2 - sprite.size.width - 50, y: 0), CGPoint(x: 0, y: 0), CGPoint(x: self.size.width / 2 + sprite.size.width, y: 0)]
         let car = CarEntity(levelManager: levelManager, node: sprite, movePoints: points, upgrades: Upgrade(money: 0, factor: 1.0, spriteName: "old car"), Upgrade(money: 500, factor: 0.7, spriteName: "New car"), Upgrade(money: 1000, factor: 0.5, spriteName: "bus"))
         sprite.position = points.first!
         

@@ -27,18 +27,26 @@ class UpgradeComponent: GKComponent {
     private lazy var labelNode: SKLabelNode = {
         guard let node = self.entity?.component(ofType: GKSKNodeComponent.self)?.node as? SKSpriteNode else { fatalError("upgrade") }
         let label = SKLabelNode(fontNamed: Const.Fonts.bold)
-        let background = SKSpriteNode(color: UIColor.red, size: CGSize(width: 30, height: 20))
-        let topRight = CGPoint(x: node.size.width / 2 - 10, y: node.size.height / 2 - 5)
+        let background = SKSpriteNode(imageNamed: "upgrade background")
+        let position = CGPoint(x: -node.size.width / 2 + 21, y: node.size.height / 2 - 1)
         
-        label.position = topRight
+        background.position = position
+        background.name = Const.Nodes.upgrade
+        background.zPosition = WorldLayer.characters.rawValue + 1
+
+        label.zPosition = WorldLayer.characters.rawValue + 2
+        label.position.x = 18
+        label.position.y = -1
         label.fontSize = Const.Fonts.Size.small
         label.horizontalAlignmentMode = .center
         label.verticalAlignmentMode = .center
-        background.position = topRight
-        background.name = Const.Nodes.upgrade
         
-        node.addChild(label)
+        if node is CarNode {
+            background.position.y = position.y + 8
+        }
+        
         node.addChild(background)
+        background.addChild(label)
         
         self.backgroundNode = background
         
@@ -67,8 +75,9 @@ class UpgradeComponent: GKComponent {
         if currentUpgrade != upgrades.last {
             labelNode.text = upgrades[upgrades.index(of: currentUpgrade)! + 1].money.format(".0")
         } else {
-            labelNode.text = "done"
-            backgroundNode.color = UIColor.green
+            if labelNode.parent?.parent != nil {
+                labelNode.parent?.removeFromParent()
+            }
         }
     }
     
