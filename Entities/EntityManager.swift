@@ -12,25 +12,25 @@ import SpriteKit
 class EntityManager {
     
     var entities = Set<GKEntity>()
-    unowned let scene: SKScene
+    unowned let scene: BaseScene
     var toRemove = Set<GKEntity>()
         
     lazy var componentSystems: [GKComponentSystem] = {
         let lights = GKComponentSystem(componentClass: LightComponent.self)
         let contaminators = GKComponentSystem(componentClass: ContaminatorComponent.self)
         let health = GKComponentSystem(componentClass: HealthComponent.self)
-        let drawPath = GKComponentSystem(componentClass: DrawPathComponent.self)
         let movement = GKComponentSystem(componentClass: MovementComponent.self)
         let destination = GKComponentSystem(componentClass: DestinationComponent.self)
+        let drawPath = GKComponentSystem(componentClass: DrawPathComponent.self)
         let capacity = GKComponentSystem(componentClass: CapacityComponent.self)
         let infiniteMovement = GKComponentSystem(componentClass: InfiniteMovementComponent.self)
         let upgrade = GKComponentSystem(componentClass: UpgradeComponent.self)
         let event = GKComponentSystem(componentClass: EventComponent.self)
         // !!!: Order matters!!
-        return [lights, contaminators, health, drawPath, movement, destination, capacity, infiniteMovement, upgrade, event]
+        return [lights, contaminators, health, movement, destination, drawPath, capacity, infiniteMovement, upgrade, event]
     }()
     
-    init(scene: SKScene) {
+    init(scene: BaseScene) {
         self.scene = scene
     }
     
@@ -38,7 +38,7 @@ class EntityManager {
         entities.insert(entity)
         
         if let node = entity.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
-            scene.addChild(node)
+            scene.worldNode.addChild(node)
         }
         
         addComponentsOf(entity: entity)

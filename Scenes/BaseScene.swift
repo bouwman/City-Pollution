@@ -26,6 +26,8 @@ class BaseScene: SKScene {
         return nil
     }
     
+    lazy var worldNode: SKNode = self.childNode(withName: "world")!
+    
     /// All buttons currently in the scene. Updated by assigning the result of `findAllButtonsInScene()`.
     var buttons = [ButtonNode]()
     

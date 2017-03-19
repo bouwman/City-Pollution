@@ -10,14 +10,14 @@ import GameplayKit
 
 class DrawPathComponent: GKComponent {
     
-    var pathColor = SKColor.gray
-    var pathColorDestination = SKColor.blue
+    var pathColor = SKColor(white: 0.9, alpha: 0.8)
+    var pathColorDestination = SKColor(hue: 0.589, saturation: 0.68, brightness: 0.89, alpha: 1.0)
 
     var renderComponent: GKSKNodeComponent {
         guard let renderComponent = entity?.component(ofType: GKSKNodeComponent.self) else { fatalError("A DrawPathComponent entity must have a RenderComponent") }
         return renderComponent
     }
-    
+
     var pathComponent: PathComponent {
         guard let pathComponent = entity?.component(ofType: PathComponent.self) else { fatalError("A DrawPathComponent entity must have a PathComponent") }
         return pathComponent
@@ -30,13 +30,12 @@ class DrawPathComponent: GKComponent {
         
         let parentNode: SKNode
         
-        if let scene = renderComponent.node.scene {
-            parentNode = scene
+        if let scene = renderComponent.node.scene as? BaseScene {
+            parentNode = scene.worldNode
         } else {
             // ???: Does is make sense to draw points here?
             parentNode = renderComponent.node
         }
-        
         parentNode.enumerateChildNodes(withName: String(describing: entity), using: { node, stop in
             node.removeFromParent()
         })

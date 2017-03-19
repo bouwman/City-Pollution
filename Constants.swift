@@ -51,7 +51,7 @@ struct Const {
         static let yDistanceAfterSpawn = CGFloat(0.0)
         static let startHealthPercent = 0.5
         static let healthIncreaseBase = 0.001
-        static let healthDecreaseBase = 0.0005
+        static let healthDecreaseBase = 0.0007
         static let healthBarDistance = CGFloat(6.0)
         static let healthBarHeight = CGFloat(5.0)
         static let healthBarColor = UIColor.green

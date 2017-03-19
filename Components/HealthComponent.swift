@@ -34,7 +34,8 @@ class HealthComponent: GKComponent {
     
     private lazy var regenerationZone: SKSpriteNode? = {
         guard let node = self.entity?.component(ofType: GKSKNodeComponent.self)?.node else { return nil }
-        guard let zone = node.scene?.childNode(withName: Const.Nodes.Layers.board)?.childNode(withName: Const.Nodes.regenerationZone) else { return nil }
+        guard let baseScene = node.scene as? BaseScene else { return nil }
+        guard let zone = baseScene.worldNode.childNode(withName: Const.Nodes.Layers.board)?.childNode(withName: Const.Nodes.regenerationZone) else { return nil }
         
         return zone as? SKSpriteNode
     }()
@@ -88,6 +89,9 @@ class HealthComponent: GKComponent {
         }
         switch curHealth {
         case 0:
+            if let pathComponent = entity?.component(ofType: PathComponent.self) {
+                pathComponent.clearMovingPoints()
+            }
             delegate?.healthComponentens(entity: entity!, didReachHealthLevel: .dead)
         case maxHealth:
             // isRegenerating = false
@@ -139,7 +143,8 @@ class HealthComponent: GKComponent {
     
     private var upgradeComponent: UpgradeComponent?  {
         guard let node = entity?.component(ofType: GKSKNodeComponent.self)?.node else { return nil }
-        guard let regenerationZone = node.scene?.childNode(withName: Const.Nodes.Layers.board)?.childNode(withName: Const.Nodes.regenerationZone) else { return nil }
+        guard let baseScene = node.scene as? BaseScene else { return nil }
+        guard let regenerationZone = baseScene.worldNode.childNode(withName: Const.Nodes.Layers.board)?.childNode(withName: Const.Nodes.regenerationZone) else { return nil }
         
         return regenerationZone.entity?.component(ofType: UpgradeComponent.self)
     }

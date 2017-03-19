@@ -9,10 +9,6 @@
 import SpriteKit
 import GameplayKit
 
-protocol LevelSceneDelegate {
-//    func levelScene(levelScene: LevelScene, did)
-}
-
 class LevelScene: BaseScene {
     var lastUpdateTimeInterval: TimeInterval = 0
     var totalTimeInterval: TimeInterval = 0
@@ -37,11 +33,11 @@ class LevelScene: BaseScene {
         ])
     
     var pollutionNode: PollutionNode {
-        let hud = self.childNode(withName: "hud")
+        let hud = worldNode.childNode(withName: "hud")
         return hud!.childNode(withName: "pollution") as! PollutionNode
     }
     var moneyLabel: SKLabelNode {
-        let hud = self.childNode(withName: "hud")
+        let hud = worldNode.childNode(withName: "hud")
         return hud!.childNode(withName: "money") as! SKLabelNode
     }
     
@@ -50,7 +46,7 @@ class LevelScene: BaseScene {
     override func didMove(to view: SKView) {
         super.didMove(to: view)
         
-        pollutionBackground = childNode(withName: Const.Nodes.Layers.board)!.childNode(withName: "background") as! SKSpriteNode
+        pollutionBackground = worldNode.childNode(withName: Const.Nodes.Layers.board)!.childNode(withName: "background") as! SKSpriteNode
         
         NotificationCenter.default.add(self, selector: #selector(LevelScene.didReceiveSpawnNewCitizenTypeNotification), notification: .spawnNewCitizenType)
         registerForPauseNotifications()
@@ -64,11 +60,11 @@ class LevelScene: BaseScene {
         physicsWorld.contactDelegate = self
         
         let config = levelManager.configuration
-        let houseCount = children.filter({$0.name == Const.Nodes.house}).count
+        let houseCount = worldNode.children.filter({$0.name == Const.Nodes.house}).count
         let citizensPerHouse = config.citizenCount / houseCount
         let pollutionPerHouse = config.pollutionLight / Double(houseCount)
         
-        for layerNode in children {
+        for layerNode in worldNode.children {
             if let house = layerNode as? HouseNode {
                 let entity = HouseEntity(levelManager: levelManager, node: house, maxCapacity: citizensPerHouse, pollutionInput: pollutionPerHouse)
                 houses.append(entity)
@@ -104,6 +100,13 @@ class LevelScene: BaseScene {
         
         // Don't perform any updates if the scene isn't in a view.
         guard view != nil else { return }
+        
+        /*
+         Don't evaluate any updates if the `worldNode` is paused.
+         Pausing a subsection of the node tree allows the `camera`
+         and `overlay` nodes to remain interactive.
+         */
+        if worldNode.isPaused { return }
         
         // Do not count seconds when was paused
         if wasPaused {
@@ -230,8 +233,8 @@ class LevelScene: BaseScene {
         wasPaused = !pause
 
         entityManager.pause(pause)
-        isPaused = pause
-        // isUserInteractionEnabled = !pause
+        worldNode.isPaused = pause
+        isUserInteractionEnabled = !pause
     }    
 }
 
@@ -269,10 +272,20 @@ extension LevelScene: SKPhysicsContactDelegate {
         let isSecondCar = secondBody.categoryBitMask == Const.Physics.Category.cars
         
         if isFirstCitizen && isSecondCar {
+            SoundManager.sharedInstance.playSound(.overrun, inScene: self)
             let citizen = firstBody.node!.entity! as! CitizenEntity
+            
+            if let pathComponent = citizen.component(ofType: PathComponent.self) {
+                pathComponent.clearMovingPoints()
+            }
             citizen.delegate?.citizenEnitityDidDie(citizen: citizen)
         } else if isFirstCar && isSecondCitizen {
+            SoundManager.sharedInstance.playSound(.overrun, inScene: self)
             let citizen = secondBody.node!.entity! as! CitizenEntity
+            
+            if let pathComponent = citizen.component(ofType: PathComponent.self) {
+                pathComponent.clearMovingPoints()
+            }
             citizen.delegate?.citizenEnitityDidDie(citizen: citizen)
         }
     }

@@ -43,7 +43,6 @@ class EventComponent: GKComponent {
             
         case .citizenDied(let money):
             animate(text: money.format(".0") + "$", startPosition:  position, isNegative: true)
-            SoundManager.sharedInstance.playSound(.overrun, inScene: scene)
             
         case .reachHealth(let healthLevel):
             animate(node: entityNode, healthLevel: healthLevel)

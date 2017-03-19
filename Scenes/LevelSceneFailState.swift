@@ -19,6 +19,9 @@ class LevelSceneFailState: LevelSceneOverlayState {
     
     override func didEnter(from previousState: GKState?) {
         super.didEnter(from: previousState)
+        
+        SoundManager.sharedInstance.stopMusic()
+        SoundManager.sharedInstance.playSound(.lose, inScene: levelScene)
     }
     
     override func isValidNextState(_ stateClass: AnyClass) -> Bool {

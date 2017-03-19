@@ -71,6 +71,10 @@ class DestinationComponent: GKComponent {
         }
         
         if destNode.contains(destPoint) {
+            if let pathComponent = entity.component(ofType: PathComponent.self) {
+                pathComponent.clearMovingPoints()
+            }
+            
             delegate?.destinationComponentens(entity: entity, didArriveAt: destination)
         }
     }

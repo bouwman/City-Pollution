@@ -185,6 +185,7 @@ class CitizenEntity: GKEntity, DestinationComponentDelegate, HealthComponentDele
         case .critical:
             break
         case .dead:
+            SoundManager.sharedInstance.playSound(.die)
             delegate?.citizenEnitityDidDie(citizen: self)
         }
         

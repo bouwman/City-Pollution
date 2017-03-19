@@ -10,7 +10,7 @@ import SpriteKit
 import AVFoundation
 
 enum Sound {
-    case coin, overrun, click
+    case coin, overrun, click, die, win, lose
 }
 
 enum Music {
@@ -21,7 +21,10 @@ class SoundManager {
     private let playCoin = SKAction.playSoundFileNamed("coins.caf", waitForCompletion: false)
     private let playOverrun = SKAction.playSoundFileNamed("overrun.caf", waitForCompletion: false)
     private let playClick = SKAction.playSoundFileNamed("click.caf", waitForCompletion: false)
-    
+    private let playDie = SKAction.playSoundFileNamed("die.caf", waitForCompletion: false)
+    private let playWin = SKAction.playSoundFileNamed("win.caf", waitForCompletion: false)
+    private let playLose = SKAction.playSoundFileNamed("lose.caf", waitForCompletion: false)
+
     private var backgroundMusicPlayer = AVAudioPlayer()
     
     weak var currentScene: SKScene?
@@ -41,7 +44,6 @@ class SoundManager {
     }
     
     func playSound(_ sound: Sound, inScene scene: SKScene) {
-        
         switch sound {
         case .coin:
             scene.run(playCoin)
@@ -49,12 +51,22 @@ class SoundManager {
             scene.run(playOverrun)
         case .click:
             scene.run(playClick)
+        case .die:
+            scene.run(playDie)
+        case .win:
+            scene.run(playWin)
+        case .lose:
+            scene.run(playLose)
         }
     }
     
     func playSound(_ sound: Sound) {
         guard let currentScene = self.currentScene else { return }
         playSound(sound, inScene: currentScene)
+    }
+    
+    func stopMusic() {
+        backgroundMusicPlayer.stop()
     }
     
     private func playBackgroundMusic(filename: String) {
