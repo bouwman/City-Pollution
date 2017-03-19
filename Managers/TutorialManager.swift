@@ -27,7 +27,7 @@ class TutorialManager: NSObject {
         
         NotificationCenter.default.add(self, selector: #selector(TutorialManager.didReceiveSpawnCitizenNotification), notification: .spawnCitizen)
         
-        currentStep = "Welcome to London!\n\nIn 1952 the “great smog” resulted in 4,000 deaths in a matter of days.  Currently diesel vehicles and indoor pollution contribute to illegally high levels of no2. \nInhaling No2 is similar to breathing in tar. It inflames the lungs and increases the chances of strokes, heart attacks, asthma, and lung cancer. An estimated 40,000 people across the uk die prematurely from noz pollution each year."
+        currentStep = "Welcome to London!\n\nCurrently diesel vehicles and indoor pollution contribute to illegally high levels of NO2.  Inhaling NO2 is similar to breathing in tar. It inflames the lungs and increases the risk of stroke, heart attack, asthma and lung cancer. An estimated 40,000 people die prematurely from NO2 pollution in the UK each year."
         currentStepImageName = "london intro background"
     }
     
@@ -39,7 +39,7 @@ class TutorialManager: NSObject {
         // Listen for next step
         NotificationCenter.default.add(self, selector: #selector(TutorialManager.didReceiveArriveAtParkNotification), notification: .arriveAtPark)
         
-        currentStep = "The citizen wants some fresh air. Move him to the park. The air quality is really bad though. Make sure your citizens do not die on their way to the park."
+        currentStep = "Your healthy citizen needs time in the park to increase vitality.\n\nDraw a line to show the way but beware of polluting cars!"
         currentStepImageName = "tutorial draw a line"
         levelScene.stateMachine.enter(LevelSceneInstructionsState.self)
     }
@@ -51,7 +51,7 @@ class TutorialManager: NSObject {
         NotificationCenter.default.add(self, selector: #selector(TutorialManager.didReceiveTurnOnLightNotification), notification: .turnOnLight)
         NotificationCenter.default.add(self, selector: #selector(TutorialManager.didReceiveReachMaxHealthNotification), notification: .reachMaxHealth)
         
-        currentStep = "Good job! Wait for the citizen to regenerate. Don't forget to take care of the other citizens."
+        currentStep = "Good job!  Your healthy citizen can now enjoy a short time outside.\n\nDon’t forget to bring others to the park to join."
         currentStepImageName = "tutorial regenerating"
         levelScene.stateMachine.enter(LevelSceneInstructionsState.self)
     }
@@ -59,8 +59,8 @@ class TutorialManager: NSObject {
     func didReceiveTurnOnLightNotification() {
         NotificationCenter.default.remove(self, forNotification: .turnOnLight)
         
-        currentStep = "Oh, someone left their light on. Turn it off to reduce the pollution. You see the current pollution level in the top left corner. The pollution level is also reflected by the color of the ground."
-        currentStepImageName = nil
+        currentStep = "Oh, someone left their light on. Reduce pollution levels by tapping a house to turn the lights off and save energy."
+        currentStepImageName = "tutorial turn off light"
         levelScene.stateMachine.enter(LevelSceneInstructionsState.self)
     }
     
@@ -70,7 +70,7 @@ class TutorialManager: NSObject {
         // Listen for next step
         NotificationCenter.default.add(self, selector: #selector(TutorialManager.didReceiveArriveAtHouseNotification), notification: .arriveAtHouse)
         
-        currentStep = "Move back the citizen back to earn support. The numbers above the house reflect the capacity of the house. You can only move citizens into houses that have some capactity left."
+        currentStep = "Earn support by drawing a line to guide your citizen back home, the line should turn blue.\n\nMake sure the home isn’t already full."
         currentStepImageName = "tutorial send back"
         levelScene.stateMachine.enter(LevelSceneInstructionsState.self)
     }
@@ -80,7 +80,7 @@ class TutorialManager: NSObject {
         
         NotificationCenter.default.remove(self, forNotification: .arriveAtHouse)
         
-        currentStep = "Great! You earned some support. When you have earned enough support you can upgrade the factories and the car to reduce the pollution even further. Good luck saving the city!"
+        currentStep = "Great! Once you have enough, you can use your support to cut down pollution by upgrading factories and cars.\n\nGood luck saving the city!"
         currentStepImageName = nil
         levelScene.stateMachine.enter(LevelSceneInstructionsState.self)
     }

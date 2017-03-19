@@ -76,9 +76,9 @@ struct Const {
         
         struct Intros {
             // TODO: Fix!!
-            static let normal = "My wife passed away 5 years ago. After that I didn’t really leave the house.  Then one day I went to the park. That’s when I saw Lily. She was beautiful. I didn’t know what to say so I picked a flower and handed it to her.  She smiled. I’ve been meeting her with a flower in the park every day since."
+            static let normal = "no description yet"
             static let child = "My favorite player is Messi.  When I grow up I want to be just like him.  I can’t wear his jersey to school so mom bought me yellow tape and put 10’s on my shirts instead. I used to play forward like he does. I was really fast. But now i’m not allowed to because the air makes my asthma bad."
-            static let old = "My wife passed away 5 years ago. After that I didn’t really leave the house.  Then one day I went to the park. That’s when I saw Lily. She was beautiful. I didn’t know what to say so I picked a flower and handed it to her.  She smiled. I’ve been meeting her with a flower in the park every day since."
+            static let old = "“Thanks for cleaning the air! After my wife passed I didn’t go out much.  Then I met Lily in the park. I didn’t know what to say so I picked a flower. She smiled.  When the air is clean we meet in the park and I bring her a different flower every time.”\n                     — Frank"
             static let asthma = "no intro yet"
         }
     }
@@ -132,7 +132,7 @@ extension SKMultilineLabel {
     static func defaultStyle(backgroundSize: CGSize) -> SKMultilineLabel {
         let margin: CGFloat = 120
         let width = Int(backgroundSize.width - margin)
-        let label = SKMultilineLabel(text: "default text", labelWidth: width, pos: CGPoint.zero, fontName: "Futura", fontSize: 20, fontColor: UIColor.white, leading: 24, alignment: .left, shouldShowBorder: false)
+        let label = SKMultilineLabel(text: "default text", labelWidth: width, pos: CGPoint.zero, fontName: "Futura", fontSize: 20, fontColor: UIColor.white, leading: 26, alignment: .left, shouldShowBorder: false)
         
         label.zPosition = WorldLayer.top.rawValue
         label.position.y = backgroundSize.height / 2 - margin / 2

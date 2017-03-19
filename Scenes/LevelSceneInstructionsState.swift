@@ -47,6 +47,10 @@ class LevelSceneInstructionsState: LevelSceneOverlayState {
                 imageNode.isHidden = false
                 imageNode.texture = texture
                 imageNode.size = texture.size()
+                
+                if currentStepImageName != "london intro background" {
+                    imageNode.position.y = -30
+                }
             } else {
                 imageNode.isHidden = true
             }
