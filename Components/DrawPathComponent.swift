@@ -23,19 +23,19 @@ class DrawPathComponent: GKComponent {
         return pathComponent
     }
     
+    weak var lastParentNode: SKNode?
+    
     override func update(deltaTime seconds: TimeInterval) {
         super.update(deltaTime: seconds)
         
         guard let entity = self.entity else { return }
         
-        let parentNode: SKNode
-        
         if let scene = renderComponent.node.scene as? BaseScene {
-            parentNode = scene.worldNode
-        } else {
-            // ???: Does is make sense to draw points here?
-            parentNode = renderComponent.node
+            lastParentNode = scene.worldNode
         }
+        
+        guard let parentNode = lastParentNode else { return }
+
         parentNode.enumerateChildNodes(withName: String(describing: entity), using: { node, stop in
             node.removeFromParent()
         })

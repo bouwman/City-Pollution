@@ -37,9 +37,9 @@ class SoundManager {
     func playMusic(music: Music, inScene scene: SKScene) {
         switch music {
         case .level:
-            playBackgroundMusic(filename: "background.mp3")
+            playBackgroundMusic(filename: "background level.mp3")
         case .world:
-            fatalError("no music yet")
+            playBackgroundMusic(filename: "background.mp3")
         }
     }
     

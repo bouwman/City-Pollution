@@ -38,6 +38,9 @@ class SceneManager {
             presentingView.presentScene(scene, transition: transition)
             
             SoundManager.sharedInstance.currentScene = scene
+            
+            // TODO: Temporary solution
+            SoundManager.sharedInstance.playMusic(music: .level, inScene: scene)
         case .home:
             guard let scene = SKScene(fileNamed: "WorldScene") as? WorldScene else { break }
             scene.sceneManager = self
@@ -50,7 +53,7 @@ class SceneManager {
             SoundManager.sharedInstance.currentScene = scene
             
             // TODO: Temporary solution
-            SoundManager.sharedInstance.playMusic(music: .level, inScene: scene)
+            SoundManager.sharedInstance.playMusic(music: .world, inScene: scene)
         default:
             break
         }
