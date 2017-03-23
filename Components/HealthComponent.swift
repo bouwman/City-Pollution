@@ -25,6 +25,7 @@ class HealthComponent: GKComponent {
     var decreaseFactor: Double
     var increaseFactor: Double
     var isRegenerating: Bool
+    var parkBoarderCrossed = false
     var delegate: HealthComponentDelegate?
     var healthBar: HealthBar?
     
@@ -55,7 +56,6 @@ class HealthComponent: GKComponent {
     }
     
     private var oldHealth: Double
-    private var parkBoarderCrossed = false
     
     init(maxHealth: Double, decreaseFactor: Double, startHealthPercent: Double, increaseFactor: Double) {
         self.maxHealth = maxHealth

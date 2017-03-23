@@ -51,14 +51,14 @@ struct Const {
         static let yDistanceAfterSpawn = CGFloat(0.0)
         static let startHealthPercent = 0.5
         static let healthIncreaseBase = 0.001
-        static let healthDecreaseBase = 0.0007
+        static let healthDecreaseBase = 0.0008
         static let healthBarDistance = CGFloat(6.0)
         static let healthBarHeight = CGFloat(5.0)
         static let healthBarColor = UIColor.green
         static let greenRange = 0.8..<1.01
         static let yellowRange = 0.3..<0.8
         static let redRange = 0..<0.3
-        static let earnRangeNormal = 0.5..<Citizens.greenRange.lowerBound
+        static let earnRangeNormal = 0.3..<Citizens.greenRange.lowerBound
         static let earnRangePerfect = Citizens.greenRange
         
         struct Sprites {
@@ -69,9 +69,9 @@ struct Const {
         
         struct TypesFactors {
             static let normal = 1.0
-            static let child =  1.3
-            static let old =    1.2
-            static let asthma = 1.4
+            static let child =  1.5
+            static let old =    1.4
+            static let asthma = 1.7
         }
         
         struct Intros {

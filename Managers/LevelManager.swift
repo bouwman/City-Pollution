@@ -44,7 +44,8 @@ class LevelManager: CitizenEntityDelegate {
     
     func citizenEnitityDidArriveAtDestination(citizen: CitizenEntity) {
         if let healthComponent = citizen.component(ofType: HealthComponent.self) {
-            let earnings = earningsOrLossFor(citizenHealth: healthComponent.curHealthPercent)
+            let earnings = earningsOrLossFor(citizenHealth: healthComponent.curHealthPercent, wentToPark: healthComponent.parkBoarderCrossed)
+            
             money += earnings
             
             if let event = citizen.component(ofType: EventComponent.self) {
@@ -57,7 +58,7 @@ class LevelManager: CitizenEntityDelegate {
     }
     
     func citizenEnitityDidDie(citizen: CitizenEntity) {        
-        let earnings = earningsOrLossFor(citizenHealth: 0)
+        let earnings = earningsOrLossFor(citizenHealth: 0, wentToPark: false)
         
         money += earnings
         citizenCount -= 1
@@ -69,16 +70,16 @@ class LevelManager: CitizenEntityDelegate {
         scene.entityManager.remove(citizen)
     }
     
-    func earningsOrLossFor(citizenHealth: Double) -> Double {
+    func earningsOrLossFor(citizenHealth: Double, wentToPark: Bool) -> Double {
         switch citizenHealth {
         case 0:
             return -500
         case 0..<Const.Citizens.earnRangeNormal.lowerBound:
             return 0
         case Const.Citizens.earnRangeNormal:
-            return 100
+            return wentToPark ? 100 : 10
         case Const.Citizens.earnRangePerfect:
-            return 200
+            return wentToPark ? 200 : 10
         default:
             fatalError("health level out of bounce")
         }

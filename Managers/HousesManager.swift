@@ -72,16 +72,18 @@ class HousesManager {
         delegate.housesManager(self, didSpawnCitizen: newCitizen)
     }
     
+    var wasFirst = true
+    
     // TODO: Enhance
     private func nextType() -> CitizenType {
         let type: CitizenType
         if currentLevel > 0 {
-            let possibleType = levelTypes[1]
-            if possibleType.rawValue == lastSpawnedType.rawValue {
-                type = levelTypes[0]
+            if wasFirst {
+                type = levelTypes[1]
             } else {
-                type = possibleType
+                type = levelTypes[0]
             }
+            wasFirst = !wasFirst
         } else {
             type = levelTypes.first!
         }
