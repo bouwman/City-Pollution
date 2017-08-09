@@ -77,9 +77,9 @@ class LevelManager: CitizenEntityDelegate {
         case 0..<Const.Citizens.earnRangeNormal.lowerBound:
             return 0
         case Const.Citizens.earnRangeNormal:
-            return wentToPark ? 100 : 10
+            return wentToPark ? 500 : 10
         case Const.Citizens.earnRangePerfect:
-            return wentToPark ? 200 : 10
+            return wentToPark ? 1000 : 10
         default:
             fatalError("health level out of bounce")
         }
